@@ -1,10 +1,25 @@
-﻿using Application.Interfaces;
+﻿#region Usings
+
+// Application
+using Application.Interfaces.ServicesInterfaces;
+
+
+// Domain
 using Domain.Entities;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+
+
+// External libraries
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+
+// Internal libraries
 using System.Security.Claims;
 using System.Text;
+
+#endregion
 
 namespace Application.Services
 {
@@ -19,6 +34,29 @@ namespace Application.Services
             _dateTimeService = dateTime;
         }
 
+        public string GetTokenFromHeaders(HttpContext context)
+        {
+            string? authorizationHeader = context.Request.Headers.Authorization;
+            if (authorizationHeader == null)
+                throw new UnauthorizedAccessException();
+            string token = authorizationHeader.Replace("Bearer ", "");
+            return token;
+        }
+
+        public JwtSecurityToken HandleJWT(string token)
+        {
+            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+            var handledJWT = handler.ReadJwtToken(token);
+            return handledJWT;
+        }
+
+        public int GetUserIdFromJwt(HttpContext context)
+        {
+            string token = GetTokenFromHeaders(context);
+            int user_id = int.Parse(HandleJWT(token).Subject);
+            return user_id;
+        }
+
         public async Task<string> GenerateJWT(User user)
         {
             await System.Threading.Tasks.Task.Delay(0);
@@ -31,8 +69,7 @@ namespace Application.Services
             var header = new JwtHeader(signingCredentials);
             var claims = new[]
             {
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim("Id", user.Id.ToString())
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString())
             };
             var payload = new JwtPayload(
                 _configuration["JwtSettings:Issuer"],

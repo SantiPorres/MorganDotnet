@@ -25,10 +25,15 @@ namespace Persistence.Configurations
                 .HasMaxLength(100);
 
             builder.HasMany(x => x.UserProjects)
-                .WithOne(p => p.User);
+                .WithOne(p => p.User)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(x => x.Tasks)
                 .WithOne(p => p.User);
+
+            builder.HasMany(x => x.OwnsProjects)
+                .WithOne(p => p.User)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

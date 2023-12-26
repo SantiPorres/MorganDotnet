@@ -19,9 +19,13 @@ namespace Persistence.Configurations
             builder.Property(x => x.Description)
                 .HasMaxLength(300);
 
-            builder.HasMany(x => x.ProjectUsers)
-                .WithOne(p => p.Project)
+            builder.HasOne(x => x.User)
+                .WithMany(p => p.OwnsProjects)
+                .HasForeignKey(x => x.ProjectOwnerId)
                 .IsRequired();
+
+            builder.HasMany(x => x.ProjectUsers)
+                .WithOne(p => p.Project);
 
             builder.HasMany(x => x.Tasks)
                 .WithOne(p => p.Project);

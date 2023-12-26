@@ -1,5 +1,14 @@
 ﻿using Application.Interfaces;
+using Application.Interfaces.ProjectInterfaces;
+using Application.Interfaces.ServicesInterfaces;
+using Application.Interfaces.UserInterfaces;
 using Application.Services;
+using Application.Services.ProjectServices;
+using Application.Services.UserServices;
+using Application.Validators.AccountValidators;
+using Application.Validators.ProjectValidators;
+using Domain.Validators;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +23,16 @@ namespace Application
         public static void AddApplicationCore(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+
+            #region Validators
+
+            services.AddValidatorsFromAssemblyContaining<RegisterUserDTOValidator>();
+            services.AddValidatorsFromAssemblyContaining<LoginUserDTOValidator>();
+
+            services.AddValidatorsFromAssemblyContaining<CreateProjectDTOValidator>();
+
+            #endregion
 
             services.AddAuthentication(options =>
             {
@@ -39,6 +58,12 @@ namespace Application
             services.AddScoped<IUserService, UserService>();
 
             services.AddScoped<IAccountService, AccountService>();
+
+            services.AddTransient<IDateTimeService, DateTimeService>();
+
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
+
+            services.AddScoped<IProjectService, ProjectService>();
         }
     }
 }

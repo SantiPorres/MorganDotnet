@@ -1,4 +1,4 @@
-﻿using Application.Exceptions;
+﻿using Domain.CustomExceptions;
 using Application.Wrappers;
 using System.Net;
 using System.Text.Json;
@@ -31,9 +31,9 @@ namespace WebAPI.Middlewares
                     case BusinessException e:
                         response.StatusCode = (int)HttpStatusCode.BadRequest;
                         break;
-                    case ValidationException e:
+                    case FluentValidation.ValidationException e:
                         response.StatusCode = (int)HttpStatusCode.BadRequest;
-                        responseModel.Errors = e.Errors;
+                        responseModel.Errors = e.Errors.Select(error => error.ErrorMessage).ToList();
                         break;
                     case DataAccessException e:
                         response.StatusCode = (int)HttpStatusCode.InternalServerError;

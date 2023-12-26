@@ -8,9 +8,13 @@ namespace Domain.Entities
 
         public string? Description { get; set; }
 
+        public required int ProjectOwnerId { get; set; }
+
 
         public ICollection<Task>? Tasks { get; set; }
 
-        public required ICollection<UserProject> ProjectUsers { get; set; }
+        public ICollection<UserProject>? ProjectUsers { get; set; }
+
+        public required User User { get; set; }
     }
 }

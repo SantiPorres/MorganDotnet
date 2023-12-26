@@ -15,14 +15,14 @@ namespace Persistence.Configurations
             builder.HasOne(x => x.User)
                 .WithMany(p => p.UserProjects)
                 .HasForeignKey(x => x.UserId)
-                .OnDelete(DeleteBehavior.Cascade)
-                .IsRequired();
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.Project)
                 .WithMany(p => p.ProjectUsers)
                 .HasForeignKey(x => x.ProjectId)
-                .OnDelete(DeleteBehavior.Cascade)
-                .IsRequired();
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Property(x => x.Role)
                 .IsRequired();

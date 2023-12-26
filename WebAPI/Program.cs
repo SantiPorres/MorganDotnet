@@ -3,7 +3,6 @@ using Asp.Versioning;
 using Domain;
 using Microsoft.Extensions.Options;
 using Persistence;
-using Shared;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using WebAPI.Extensions;
 using WebAPI.Swagger;
@@ -16,7 +15,6 @@ builder.Services.AddControllers();
 builder.Services.AddDomainCore(builder.Configuration);
 builder.Services.AddApplicationCore(builder.Configuration);
 builder.Services.AddPersistenceInfrastructure(builder.Configuration);
-builder.Services.AddSharedInfrastructureServices(builder.Configuration);
 
 builder.Services.AddApiVersioning(options =>
 {

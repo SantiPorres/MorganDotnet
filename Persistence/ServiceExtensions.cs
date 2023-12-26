@@ -1,4 +1,5 @@
-﻿using Domain.Interfaces;
+﻿using Application.Interfaces.ProjectInterfaces;
+using Application.Interfaces.UserInterfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,8 @@ namespace Persistence
             #region Repositories
 
             services.AddTransient(typeof(IUserRepository), typeof(UserRepository));
+
+            services.AddTransient(typeof(IProjectRepository), typeof(ProjectRepository));
 
             #endregion
         }

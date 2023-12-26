@@ -1,15 +1,14 @@
-﻿namespace Domain.Interfaces
+﻿namespace Domain.Interfaces;
+
+public interface IAuditableBaseEntity
 {
-    public interface IAuditableBaseEntity
-    {
-        int Id { get; }
+    int Id { get; }
 
-        DateTime CreatedAt { get; set; }
+    DateTime CreatedAt { get; set; }
 
-        string? CreatedBy { get; }
+    string? CreatedBy { get; }
 
-        DateTime LastModifiedAt { get; set; }
+    DateTime LastModifiedAt { get; set; }
 
-        string? LastModifiedBy { get; set; }
-    }
+    string? LastModifiedBy { get; set; }
 }

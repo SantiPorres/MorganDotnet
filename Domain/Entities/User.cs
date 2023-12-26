@@ -14,5 +14,7 @@ namespace Domain.Entities
         public ICollection<Task>? Tasks { get; set; }
 
         public ICollection<UserProject>? UserProjects { get; set; }
+
+        public ICollection<Project>? OwnsProjects { get; set; }
     }
 }

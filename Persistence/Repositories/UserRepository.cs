@@ -1,6 +1,6 @@
-﻿using Application.Exceptions;
+﻿using Application.Interfaces.UserInterfaces;
+using Domain.CustomExceptions;
 using Domain.Entities;
-using Domain.Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Contexts;
@@ -12,12 +12,14 @@ namespace Persistence.Repositories
     {
         private readonly ApplicationDbContext _dbContext;
 
-        public UserRepository(ApplicationDbContext dbContext)
+        public UserRepository(
+            ApplicationDbContext dbContext
+        )
         {
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<User>> GetAll()
+        public async Task<IEnumerable<User>> GetAllUsers()
         {
             try
             {
