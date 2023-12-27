@@ -38,7 +38,7 @@ namespace Persistence.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(80)", maxLength: 80, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
-                    ProjectOwnerId = table.Column<int>(type: "int", nullable: false),
+                    OwnerId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -48,8 +48,8 @@ namespace Persistence.Migrations
                 {
                     table.PrimaryKey("PK_Projects", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Projects_Users_ProjectOwnerId",
-                        column: x => x.ProjectOwnerId,
+                        name: "FK_Projects_Users_OwnerId",
+                        column: x => x.OwnerId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -118,9 +118,9 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Projects_ProjectOwnerId",
+                name: "IX_Projects_OwnerId",
                 table: "Projects",
-                column: "ProjectOwnerId");
+                column: "OwnerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tasks_ProjectId",

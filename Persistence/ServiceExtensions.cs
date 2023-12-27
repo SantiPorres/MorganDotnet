@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces.ProjectInterfaces;
 using Application.Interfaces.UserInterfaces;
+using Application.Interfaces.UserProjectInterfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,13 +16,16 @@ namespace Persistence
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
                     configuration.GetConnectionString("DefaultConnection"),
                     b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)
-                ));
+                ).LogTo(Console.WriteLine)
+            );
 
             #region Repositories
 
             services.AddTransient(typeof(IUserRepository), typeof(UserRepository));
 
             services.AddTransient(typeof(IProjectRepository), typeof(ProjectRepository));
+
+            services.AddTransient(typeof(IUserProjectRepository), typeof(UserProjectRepository));
 
             #endregion
         }

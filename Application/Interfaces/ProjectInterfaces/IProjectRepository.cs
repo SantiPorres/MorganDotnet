@@ -4,10 +4,10 @@ namespace Application.Interfaces.ProjectInterfaces
 {
     public interface IProjectRepository
     {
-        //Task<IEnumerable<Project>> GetAllProjectsByUser();
-
-        //Task<Project?> GetOneById(int id);
+        Task<Project?> GetProjectById(int projectId);
 
         Task<Project> InsertProject(Project project);
+
+        Task<bool> DeleteProject(Project project);
     }
 }

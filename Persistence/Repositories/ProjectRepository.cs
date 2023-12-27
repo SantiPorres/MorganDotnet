@@ -1,7 +1,5 @@
 ﻿using Application.Interfaces.ProjectInterfaces;
-using Domain.CustomExceptions;
 using Domain.Entities;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Contexts;
 
@@ -16,26 +14,28 @@ namespace Persistence.Repositories
             _dbContext = dbContext;
         }
 
+        public async Task<Project?> GetProjectById(int projectId)
+        {
+            return await _dbContext.Projects.SingleOrDefaultAsync(x => x.Id == projectId);
+        }
+
         public async Task<Project> InsertProject(Project project)
         {
-            try
+            
+            var newProject = await _dbContext.Projects.AddAsync(project);
+            await _dbContext.SaveChangesAsync();
+            return newProject.Entity;
+        }
+
+        public async Task<bool> DeleteProject(Project project)
+        {
+            _dbContext.Projects.Remove(project);
+            int rowsAffected = await _dbContext.SaveChangesAsync();
+            if (rowsAffected > 0)
             {
-                var newProject = await _dbContext.Projects.AddAsync(project);
-                await _dbContext.SaveChangesAsync();
-                return newProject.Entity;
+                return true;
             }
-            catch (Exception ex) when (ex is DbUpdateException || ex is DbUpdateConcurrencyException)
-            {
-                throw new DataAccessException($"DbUpdateException or DbUpdateConcurrencyException: {ex.Message}");
-            }
-            catch (SqlException ex)
-            {
-                throw new DataAccessException($"SqlException: {ex.Message}", ex.Errors);
-            }
-            catch (Exception ex)
-            {
-                throw new DataAccessException($"An error occurred: {ex.Message}");
-            }
+            return false;
         }
     }
 }

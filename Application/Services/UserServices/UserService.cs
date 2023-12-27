@@ -17,6 +17,9 @@ using Microsoft.Extensions.Options;
 using Application.DTOs.UserDTOs;
 using Application.Interfaces.UserInterfaces;
 using Application.DTOs.AccountDTOs;
+using Application.Validators.AccountValidators;
+using Application.Interfaces;
+using Application.DTOs.ProjectDTOs;
 
 #endregion
 
@@ -26,44 +29,40 @@ namespace Application.Services.UserServices
     {
         private readonly IUserRepository _userRepository;
         private readonly IValidator<User> _userValidator;
+        private readonly IValidator<RegisterUserDTO> _registerUserDTOValidator;
+        private readonly IPasswordHasher _passwordHasher;
         private readonly IOptions<PaginationOptions> _paginationOptions;
         private readonly IMapper _mapper;
 
         public UserService(
             IUserRepository userRepository,
             IValidator<User> userValidator,
+            IValidator<RegisterUserDTO> registerUserDTOValidator,
             IOptions<PaginationOptions> paginationOptions,
             IMapper mapper
-        )
+,
+            IPasswordHasher passwordHasher)
         {
             _userRepository = userRepository;
             _userValidator = userValidator;
+            _registerUserDTOValidator = registerUserDTOValidator;
             _paginationOptions = paginationOptions;
             _mapper = mapper;
+            _passwordHasher = passwordHasher;
         }
 
-        public async Task<PagedResponse<PagedList<UserDTO>>> GetAllUsers(PaginationQueryParameters filters)
+        public async Task<PagedList<UserDTO>> GetAllUsers(PaginationQueryParameters filters)
         {
             try
             {
-                var users = await _userRepository.GetAllUsers();
-                var dto = _mapper.Map<IEnumerable<UserDTO>>(users);
-                var pagedUsers = PagedList<UserDTO>.Create(
+                IEnumerable<User> users = await _userRepository.GetAllUsers();
+                IEnumerable<UserDTO> dto = _mapper.Map<IEnumerable<UserDTO>>(users);
+                PagedList<UserDTO> pagedUsers = PagedList<UserDTO>.Create(
                     dto,
                     filters.PageNumber ?? _paginationOptions.Value.DefaultPageNumber,
                     filters.PageSize ?? _paginationOptions.Value.DefaultPageSize
                 );
-                return new PagedResponse<PagedList<UserDTO>>(
-                    pagedUsers,
-                    message: null,
-                    totalCount: pagedUsers.TotalCount,
-                    pagedUsers.PageSize,
-                    pagedUsers.CurrentPage,
-                    pagedUsers.HasNextPage,
-                    pagedUsers.HasPreviousPage,
-                    pagedUsers.NextPageNumber,
-                    pagedUsers.PreviousPageNumber
-                );
+                return pagedUsers;
             }
             catch (Exception ex) when (ex is DataAccessException || ex is BusinessException)
             {
@@ -75,29 +74,52 @@ namespace Application.Services.UserServices
             }
         }
 
-        public async Task<Response<UserDTO>> InsertUser(RegisterUserDTO body)
+        public async Task<UserDTO> GetUserById(int id)
         {
             try
             {
-                var user = _mapper.Map<User>(body);
-                var validationResult = await _userValidator.ValidateAsync(user);
-                if (!validationResult.IsValid)
-                {
-                    throw new Domain.CustomExceptions.ValidationException(validationResult.Errors);
-                }
-                var newUser = await _userRepository.Insert(user);
-                UserDTO dto = _mapper.Map<UserDTO>(newUser);
-                return new Response<UserDTO>(dto);
+                User user = await _userRepository.GetOneById(id) ?? throw new KeyNotFoundException("User not found");
+                UserDTO dto = _mapper.Map<UserDTO>(user);
+                return dto;
             }
-            catch (Exception ex) when (ex is DataAccessException || ex is BusinessException)
+            catch (Exception ex) when (
+                ex is DataAccessException 
+                || ex is BusinessException
+            )
             {
                 throw;
             }
             catch (Exception ex)
             {
-                throw new BusinessException(ex.Message);
+                throw new BusinessException($"An error occurred: {ex.Message}");
             }
+        }
 
+        public async Task<UserDTO> InsertUser(RegisterUserDTO body)
+        {
+            try
+            {
+                await _registerUserDTOValidator.ValidateAndThrowAsync(body);
+                User? emailExists = await _userRepository.GetOneByEmail(body.Email);
+                if (emailExists != null)
+                    throw new BusinessException("There is already an existing account with this email");
+                User user = _mapper.Map<User>(body);
+                await _userValidator.ValidateAndThrowAsync(user);
+                string hashedPassword = _passwordHasher.Hash(user.Password);
+                user.Password = hashedPassword;
+                User newUser = await _userRepository.Insert(user);
+                UserDTO dto = _mapper.Map<UserDTO>(newUser);
+                return dto;
+            }
+            catch (Exception ex) when (
+                ex is DataAccessException
+                || ex is FluentValidation.ValidationException
+                || ex is BusinessException
+            )
+            {
+                throw;
+            }
+            catch (Exception ex) { throw new BusinessException(ex.Message); }
         }
     }
 }

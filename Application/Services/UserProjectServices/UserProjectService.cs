@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace Application.Services.UserProjectServices
 {
-    public class UserProjectService
+    public class UserProjectService : IUserProjectService
     {
         private readonly IUserProjectRepository _userProjectRepository;
         private readonly IValidator<UserProject> _userProjectValidator;
@@ -20,8 +20,16 @@ namespace Application.Services.UserProjectServices
 
         public async Task<bool> CreateRelation(UserProject userProject)
         {
-            await _userProjectValidator.ValidateAndThrowAsync( userProject );
-            return await _userProjectRepository.InsertUserProjectRelation( userProject );
+            try
+            {
+                await _userProjectValidator.ValidateAndThrowAsync( userProject );
+                UserProject newUserProject = await _userProjectRepository.InsertUserProjectRelation( userProject );
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

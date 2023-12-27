@@ -34,7 +34,8 @@ namespace WebAPI.Controllers.v1.ProjectControllers
         public async Task<Response<ProjectDTO>> CreateProject(CreateProjectDTO body)
         {
             int user_id = _tokenService.GetUserIdFromJwt(HttpContext);
-            return await _projectService.CreateProject(user_id, body);
+            ProjectDTO projectDto = await _projectService.CreateProject(user_id, body);
+            return new Response<ProjectDTO>(projectDto);
         }
     }
 }

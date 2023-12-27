@@ -8,8 +8,10 @@ namespace Application.Interfaces.UserInterfaces
 {
     public interface IUserService
     {
-        Task<PagedResponse<PagedList<UserDTO>>> GetAllUsers(PaginationQueryParameters filters);
+        Task<PagedList<UserDTO>> GetAllUsers(PaginationQueryParameters filters);
 
-        Task<Response<UserDTO>> InsertUser(RegisterUserDTO body);
+        Task<UserDTO> GetUserById(int id);
+
+        Task<UserDTO> InsertUser(RegisterUserDTO body);
     }
 }

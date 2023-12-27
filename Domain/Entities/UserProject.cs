@@ -3,17 +3,21 @@ using Domain.Enums;
 
 namespace Domain.Entities
 {
-    public class UserProject : AuditableBaseEntity
+    public class UserProject(
+        int userId,
+        int projectId,
+        UserRole role
+        ) : AuditableBaseEntity
     {
-        public required int UserId { get; set; }
+        public int UserId { get; set; } = userId;
 
-        public required int ProjectId { get; set; }
+        public int ProjectId { get; set; } = projectId;
 
-        public required UserRole Role { get; set; }
+        public UserRole Role { get; set; } = role;
 
 
-        public required User User { get; set; }
+        public User? User { get; set; }
 
-        public required Project Project { get; set; }
+        public Project? Project { get; set; }
     }
 }

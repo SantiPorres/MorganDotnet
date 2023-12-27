@@ -1,4 +1,6 @@
-﻿namespace Application.DTOs.ProjectDTOs
+﻿using Domain.Entities;
+
+namespace Application.DTOs.ProjectDTOs
 {
     public class ProjectDTO
     {
@@ -7,5 +9,7 @@
         public required string Name { get; set; }
 
         public string? Description { get; set; }
+
+        public int OwnerId { get; set; }
     }
 }

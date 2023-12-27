@@ -21,7 +21,7 @@ namespace Persistence.Configurations
 
             builder.HasOne(x => x.User)
                 .WithMany(p => p.OwnsProjects)
-                .HasForeignKey(x => x.ProjectOwnerId)
+                .HasForeignKey(x => x.OwnerId)
                 .IsRequired();
 
             builder.HasMany(x => x.ProjectUsers)

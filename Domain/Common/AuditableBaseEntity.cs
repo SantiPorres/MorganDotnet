@@ -1,4 +1,5 @@
 ﻿using Domain.Interfaces;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Domain.Common
 {

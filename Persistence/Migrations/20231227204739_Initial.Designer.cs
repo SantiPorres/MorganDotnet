@@ -12,7 +12,7 @@ using Persistence.Contexts;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231226194817_Initial")]
+    [Migration("20231227204739_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -56,12 +56,12 @@ namespace Persistence.Migrations
                         .HasMaxLength(80)
                         .HasColumnType("nvarchar(80)");
 
-                    b.Property<int>("ProjectOwnerId")
+                    b.Property<int>("OwnerId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectOwnerId");
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Projects", (string)null);
                 });
@@ -198,7 +198,7 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Domain.Entities.User", "User")
                         .WithMany("OwnsProjects")
-                        .HasForeignKey("ProjectOwnerId")
+                        .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

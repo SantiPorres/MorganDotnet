@@ -2,12 +2,13 @@
 using Application.Interfaces.ProjectInterfaces;
 using Application.Interfaces.ServicesInterfaces;
 using Application.Interfaces.UserInterfaces;
+using Application.Interfaces.UserProjectInterfaces;
 using Application.Services;
 using Application.Services.ProjectServices;
+using Application.Services.UserProjectServices;
 using Application.Services.UserServices;
 using Application.Validators.AccountValidators;
 using Application.Validators.ProjectValidators;
-using Domain.Validators;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
@@ -53,6 +54,8 @@ namespace Application
                 }
             );
 
+            #region Services
+
             services.AddScoped<ITokenService, JwtTokenService>();
 
             services.AddScoped<IUserService, UserService>();
@@ -64,6 +67,10 @@ namespace Application
             services.AddScoped<IPasswordHasher, PasswordHasher>();
 
             services.AddScoped<IProjectService, ProjectService>();
+
+            services.AddScoped<IUserProjectService, UserProjectService>();
+
+            #endregion
         }
     }
 }

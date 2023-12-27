@@ -35,13 +35,32 @@ namespace WebAPI.Controllers.v1.UserControllers
         [HttpGet]
         public async Task<PagedResponse<PagedList<UserDTO>>> GetAllUsers([FromQuery] PaginationQueryParameters filters)
         {
-            return await _userService.GetAllUsers(filters);
+            PagedList<UserDTO> pagedUsers = await _userService.GetAllUsers(filters);
+            return new PagedResponse<PagedList<UserDTO>>(
+                    pagedUsers,
+                    message: null,
+                    totalCount: pagedUsers.TotalCount,
+                    pagedUsers.PageSize,
+                    pagedUsers.CurrentPage,
+                    pagedUsers.HasNextPage,
+                    pagedUsers.HasPreviousPage,
+                    pagedUsers.NextPageNumber,
+                    pagedUsers.PreviousPageNumber
+            );
+        }
+
+        [HttpGet("id")]
+        public async Task<Response<UserDTO>> GetUserById([FromQuery] int id)
+        {
+            UserDTO userDto = await _userService.GetUserById(id);
+            return new Response<UserDTO>(userDto);
         }
 
         [HttpPost]
         public async Task<Response<UserDTO>> InsertUser(RegisterUserDTO user)
         {
-            return await _userService.InsertUser(user);
+            UserDTO userDto = await _userService.InsertUser(user);
+            return new Response<UserDTO>(userDto);
         }
     }
 }
