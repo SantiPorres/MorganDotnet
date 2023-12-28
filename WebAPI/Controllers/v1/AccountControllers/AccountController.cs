@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Application.DTOs.AccountDTOs;
 using Application.DTOs.UserDTOs;
 using Application.Interfaces.UserInterfaces;
+using Domain.CustomEntities;
 
 #endregion
 
@@ -29,14 +30,21 @@ namespace WebAPI.Controllers.v1.AccountControllers
         [HttpPost]
         public async Task<JwtTokenResponse> LoginUser(LoginUserDTO body)
         {
-            return await _accountService.LoginUser(body);
+            TokenAndEntity<UserDTO> loggedUser = await _accountService.LoginUser(body);
+            return new JwtTokenResponse
+            {
+                Succeeded = true,
+                Token = loggedUser.Token,
+                User = loggedUser.Data
+            };
         }
 
         [Route("register")]
         [HttpPost]
         public async Task<Response<UserDTO>> RegisterUser(RegisterUserDTO body)
         {
-            return await _accountService.RegisterUser(body);
+            UserDTO userDto = await _accountService.RegisterUser(body);
+            return new Response<UserDTO>(userDto);
         }
     }
 }

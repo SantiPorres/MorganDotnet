@@ -32,7 +32,7 @@ namespace WebAPI.Controllers.v1.UserControllers
             _userService = userService;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<PagedResponse<PagedList<UserDTO>>> GetAllUsers([FromQuery] PaginationQueryParameters filters)
         {
             PagedList<UserDTO> pagedUsers = await _userService.GetAllUsers(filters);
@@ -49,14 +49,14 @@ namespace WebAPI.Controllers.v1.UserControllers
             );
         }
 
-        [HttpGet("id")]
-        public async Task<Response<UserDTO>> GetUserById([FromQuery] int id)
+        [HttpGet("single")]
+        public async Task<Response<UserNavigationDTO>> GetUserById([FromQuery] Guid userId)
         {
-            UserDTO userDto = await _userService.GetUserById(id);
-            return new Response<UserDTO>(userDto);
+            UserNavigationDTO userDto = await _userService.GetUserById(userId);
+            return new Response<UserNavigationDTO>(userDto);
         }
 
-        [HttpPost]
+        [HttpPost("insert")]
         public async Task<Response<UserDTO>> InsertUser(RegisterUserDTO user)
         {
             UserDTO userDto = await _userService.InsertUser(user);

@@ -9,21 +9,17 @@ namespace Domain.Validators
         {
             RuleFor(userProject => userProject.UserId)
                 .NotEmpty()
-                .WithMessage("{PropertyName} must not be empty")
-                .GreaterThan(0)
-                .WithMessage("{PropertyName} must be greater than {ComparisonValue}");
+                .WithMessage("{PropertyName} must not be empty");
 
             RuleFor(userProject => userProject.ProjectId)
                 .NotEmpty()
-                .WithMessage("{PropertyName} must not be empty")
-                .GreaterThan(0)
-                .WithMessage("{PropertyName} must be greater than {ComparisonValue}");
+                .WithMessage("{PropertyName} must not be empty");
 
             RuleFor(userProject => userProject.Role)
                 .NotEmpty()
-                .WithMessage("{PropertyName} must not be empty")
-                .IsInEnum()
-                .WithMessage("{PropertyValue} is not a valid {PropertyName}");
+                .WithMessage("{PropertyName} must not be empty");
+                //.IsInEnum()
+                //.WithMessage("{PropertyValue} is not a valid {PropertyName}");
         }
     }
 }

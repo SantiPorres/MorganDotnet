@@ -4,7 +4,7 @@ namespace Application.Interfaces.ProjectInterfaces
 {
     public interface IProjectRepository
     {
-        Task<Project?> GetProjectById(int projectId);
+        Task<Project?> GetProjectById(Guid projectId, bool navigateProjectUsers);
 
         Task<Project> InsertProject(Project project);
 

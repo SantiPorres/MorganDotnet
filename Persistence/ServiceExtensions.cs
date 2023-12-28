@@ -28,6 +28,8 @@ namespace Persistence
             services.AddTransient(typeof(IUserProjectRepository), typeof(UserProjectRepository));
 
             #endregion
+
+            services.AddHttpContextAccessor();
         }
     }
 }

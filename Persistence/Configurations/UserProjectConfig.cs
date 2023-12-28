@@ -12,13 +12,13 @@ namespace Persistence.Configurations
 
             builder.ToTable("UserProjects");
 
-            builder.HasOne(x => x.User)
+            builder.HasOne<User>()
                 .WithMany(p => p.UserProjects)
                 .HasForeignKey(x => x.UserId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(x => x.Project)
+            builder.HasOne<Project>()
                 .WithMany(p => p.ProjectUsers)
                 .HasForeignKey(x => x.ProjectId)
                 .IsRequired()

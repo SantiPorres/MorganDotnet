@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces.UserProjectInterfaces;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Persistence.Contexts;
 namespace Persistence.Repositories
 {
@@ -14,7 +15,7 @@ namespace Persistence.Repositories
 
         public async Task<UserProject> InsertUserProjectRelation(UserProject userProject)
         {
-            var newUserProject = await _dbContext.AddAsync(userProject);
+            var newUserProject = await _dbContext.UserProjects.AddAsync(userProject);
             await _dbContext.SaveChangesAsync();
             return newUserProject.Entity;
         }

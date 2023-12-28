@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Persistence.Configurations
@@ -18,13 +19,13 @@ namespace Persistence.Configurations
             builder.Property(x => x.Description)
                 .HasMaxLength(300);
 
-            builder.HasOne(x => x.Project)
+            builder.HasOne<Project>()
                 .WithMany(p => p.Tasks)
                 .HasForeignKey(x => x.ProjectId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(x => x.User)
+            builder.HasOne<User>()
                 .WithMany(p => p.Tasks)
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.NoAction);

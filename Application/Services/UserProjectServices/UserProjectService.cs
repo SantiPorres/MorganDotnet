@@ -22,7 +22,11 @@ namespace Application.Services.UserProjectServices
         {
             try
             {
-                await _userProjectValidator.ValidateAndThrowAsync( userProject );
+                //var validation = await _userProjectValidator.ValidateAsync( userProject );
+                //if (!validation.IsValid)
+                //{
+                //    return false;
+                //}
                 UserProject newUserProject = await _userProjectRepository.InsertUserProjectRelation( userProject );
                 return true;
             }

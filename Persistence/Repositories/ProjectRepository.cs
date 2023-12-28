@@ -14,9 +14,20 @@ namespace Persistence.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<Project?> GetProjectById(int projectId)
+        public async Task<Project?> GetProjectById(Guid projectId, bool navigateProjectUsers)
         {
-            return await _dbContext.Projects.SingleOrDefaultAsync(x => x.Id == projectId);
+            Project? project;
+            if (navigateProjectUsers)
+            {
+                project = await _dbContext.Projects
+                    .Include(p => p.ProjectUsers)
+                    .SingleOrDefaultAsync(x => x.Id == projectId);
+            } else
+            {
+                project = await _dbContext.Projects
+                    .SingleOrDefaultAsync(x => x.Id == projectId);
+            }
+            return project;
         }
 
         public async Task<Project> InsertProject(Project project)

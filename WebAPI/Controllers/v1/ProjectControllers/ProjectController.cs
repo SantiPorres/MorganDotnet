@@ -23,18 +23,18 @@ namespace WebAPI.Controllers.v1.ProjectControllers
             _tokenService = tokenService;
         }
 
-        //[HttpGet]
-        //public async Task<PagedResponse<ProjectDTO>> GetUserProjects()
-        //{
-        //    int user_id = _tokenService.GetUserIdFromJwt(HttpContext);
-        //    return await _projectService.GetProjectsByUser(user_id);
-        //}
+        [HttpGet("single")]
+        public async Task<Response<ProjectNavigationDTO>> GetProjectById([FromQuery] Guid projectId)
+        {
+            ProjectNavigationDTO projectDto = await _projectService.GetProjectById(projectId);
+            return new Response<ProjectNavigationDTO>(projectDto);
+        }
 
         [HttpPost]
         public async Task<Response<ProjectDTO>> CreateProject(CreateProjectDTO body)
         {
-            int user_id = _tokenService.GetUserIdFromJwt(HttpContext);
-            ProjectDTO projectDto = await _projectService.CreateProject(user_id, body);
+            Guid userId = await _tokenService.GetUserIdFromJwt(HttpContext) ?? throw new UnauthorizedAccessException();
+            ProjectDTO projectDto = await _projectService.CreateProject(userId, body);
             return new Response<ProjectDTO>(projectDto);
         }
     }

@@ -1,7 +1,6 @@
 ﻿using Application.DTOs.AccountDTOs;
 using Application.DTOs.UserDTOs;
 using Application.Filters;
-using Application.Wrappers;
 using Domain.CustomEntities;
 
 namespace Application.Interfaces.UserInterfaces
@@ -10,7 +9,7 @@ namespace Application.Interfaces.UserInterfaces
     {
         Task<PagedList<UserDTO>> GetAllUsers(PaginationQueryParameters filters);
 
-        Task<UserDTO> GetUserById(int id);
+        Task<UserNavigationDTO> GetUserById(Guid userId);
 
         Task<UserDTO> InsertUser(RegisterUserDTO body);
     }

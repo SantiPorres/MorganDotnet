@@ -4,6 +4,7 @@ using Domain.Entities;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Contexts;
+using System.ComponentModel.Design;
 using System.Data.Common;
 
 namespace Persistence.Repositories
@@ -19,11 +20,21 @@ namespace Persistence.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<User>> GetAllUsers()
+        public async Task<IEnumerable<User>> GetAllUsers(bool navigateUserProjects)
         {
             try
             {
-                IEnumerable<User> users = await _dbContext.Users.ToListAsync();
+                IEnumerable<User> users;
+                if (navigateUserProjects)
+                {
+                    users = await _dbContext.Users
+                        .Include(p => p.UserProjects)
+                        .ToListAsync();
+                } else
+                {
+                    users = await _dbContext.Users
+                        .ToListAsync();
+                }
                 return users;
             }
             catch (SqlException ex)
@@ -36,11 +47,21 @@ namespace Persistence.Repositories
             }
         }
 
-        public async Task<User?> GetOneById(int id)
+        public async Task<User?> GetOneById(Guid userId, bool navigateUserProjects)
         {
             try
             {
-                User? user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == id);
+                User? user;
+                if (navigateUserProjects)
+                {
+                    user = await _dbContext.Users
+                        .Include(p => p.UserProjects)
+                        .SingleOrDefaultAsync(u => u.Id == userId);
+                } else
+                {
+                    user = await _dbContext.Users
+                        .SingleOrDefaultAsync(u => u.Id == userId);
+                }
                 return user;
             }
             catch (SqlException ex)
@@ -57,7 +78,7 @@ namespace Persistence.Repositories
         {
             try
             {
-                User? user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+                User? user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Email == email);
                 return user;
             }
             catch(SqlException ex)

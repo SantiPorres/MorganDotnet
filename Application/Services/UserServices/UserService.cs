@@ -55,7 +55,7 @@ namespace Application.Services.UserServices
         {
             try
             {
-                IEnumerable<User> users = await _userRepository.GetAllUsers();
+                IEnumerable<User> users = await _userRepository.GetAllUsers(navigateUserProjects: false);
                 IEnumerable<UserDTO> dto = _mapper.Map<IEnumerable<UserDTO>>(users);
                 PagedList<UserDTO> pagedUsers = PagedList<UserDTO>.Create(
                     dto,
@@ -74,12 +74,15 @@ namespace Application.Services.UserServices
             }
         }
 
-        public async Task<UserDTO> GetUserById(int id)
+        public async Task<UserNavigationDTO> GetUserById(Guid userId)
         {
             try
             {
-                User user = await _userRepository.GetOneById(id) ?? throw new KeyNotFoundException("User not found");
-                UserDTO dto = _mapper.Map<UserDTO>(user);
+                User user = await _userRepository.GetOneById(
+                    userId, 
+                    navigateUserProjects: true
+                ) ?? throw new KeyNotFoundException("User not found");
+                UserNavigationDTO dto = _mapper.Map<UserNavigationDTO>(user);
                 return dto;
             }
             catch (Exception ex) when (

@@ -1,23 +1,16 @@
 ﻿using Domain.Common;
 using Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entities
 {
-    public class UserProject(
-        int userId,
-        int projectId,
-        UserRole role
-        ) : AuditableBaseEntity
+    public class UserProject : AuditableBaseEntity
     {
-        public int UserId { get; set; } = userId;
-
-        public int ProjectId { get; set; } = projectId;
-
-        public UserRole Role { get; set; } = role;
-
-
-        public User? User { get; set; }
-
-        public Project? Project { get; set; }
+        [Required]
+        public required Guid UserId { get; set; }
+        [Required]
+        public required Guid ProjectId { get; set; }
+        [Required]
+        public required UserRole Role { get; set; }
     }
 }

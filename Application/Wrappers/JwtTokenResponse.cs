@@ -1,14 +1,12 @@
-﻿namespace Application.Wrappers
+﻿using Application.DTOs.UserDTOs;
+
+namespace Application.Wrappers
 {
     public class JwtTokenResponse
     {
         public bool Succeeded { get; set; }
-        public string Token { get; set; }
+        public required string Token { get; set; }
 
-        public JwtTokenResponse(bool succeeded, string token)
-        {
-            Succeeded = succeeded;
-            Token = token;
-        }
+        public required UserDTO User { get; set; }
     }
 }

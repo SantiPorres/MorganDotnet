@@ -14,6 +14,8 @@ namespace Application.Mappings
 
             CreateMap<User, UserDTO>().ReverseMap();
 
+            CreateMap<User, UserNavigationDTO>().ReverseMap();
+
             CreateMap<User, RegisterUserDTO>().ReverseMap();
 
             CreateMap<User, UpdateUserDTO>().ReverseMap();
@@ -23,6 +25,8 @@ namespace Application.Mappings
             #region ProjectDTOs
 
             CreateMap<Project, ProjectDTO>().ReverseMap();
+
+            CreateMap<Project, ProjectNavigationDTO>().ReverseMap();
 
             CreateMap<Project, CreateProjectDTO>().ReverseMap();
 

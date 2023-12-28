@@ -1,18 +1,17 @@
 ﻿using Domain.Interfaces;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Domain.Common
 {
     public class AuditableBaseEntity : IAuditableBaseEntity
     {
-        public int Id { get; }
-
+        public Guid Id { get; }
+        
         public DateTime CreatedAt { get; set; }
 
-        public string? CreatedBy { get; }
+        public Guid CreatedBy { get; set; }
 
         public DateTime LastModifiedAt { get; set; }
 
-        public string? LastModifiedBy { get; set; }
+        public Guid LastModifiedBy { get; set; }
     }
 }

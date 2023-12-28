@@ -2,13 +2,13 @@
 
 public interface IAuditableBaseEntity
 {
-    int Id { get; }
+    Guid Id { get; }
 
     DateTime CreatedAt { get; set; }
 
-    string? CreatedBy { get; }
+    Guid CreatedBy { get; }
 
     DateTime LastModifiedAt { get; set; }
 
-    string? LastModifiedBy { get; set; }
+    Guid LastModifiedBy { get; set; }
 }

@@ -17,13 +17,6 @@ namespace Domain.Validators
             RuleFor(project => project.Description)
                 .MaximumLength(300)
                 .WithMessage("{PropertyName} must be shorter than {MaxLength} characters");
-
-            RuleFor(project => project.OwnerId)
-                .NotNull()
-                .NotEmpty()
-                .WithMessage("Project must have an owner")
-                .GreaterThan(0)
-                .WithMessage("{PropertyName} must be greater than {ComparisonValue}");
         }
     }
 }

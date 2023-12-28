@@ -42,21 +42,44 @@ namespace Application.Services.ProjectServices
             _userRepository = userRepository;
         }
 
-        public async Task<ProjectDTO> CreateProject(int userId, CreateProjectDTO body)
+        public async Task<ProjectNavigationDTO> GetProjectById(Guid projectId)
         {
             try
             {
-                User user = await _userRepository.GetOneById(userId) ?? throw new KeyNotFoundException("User not found");
+                Project project = await _projectRepository.GetProjectById(
+                    projectId,
+                    navigateProjectUsers: true
+                ) ?? throw new KeyNotFoundException();
+                ProjectNavigationDTO dto = _mapper.Map<ProjectNavigationDTO>( project );
+                return dto;
+            }
+            catch(KeyNotFoundException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException(ex.Message);
+            }
+        }
+
+        public async Task<ProjectDTO> CreateProject(Guid userId, CreateProjectDTO body)
+        {
+            try
+            {
+                User user = await _userRepository.GetOneById(
+                    userId,
+                    navigateUserProjects: false
+                ) ?? throw new KeyNotFoundException("User not found");
                 await _createProjectDTOValidator.ValidateAndThrowAsync( body );
                 Project project = _mapper.Map<Project>( body );
-                project.OwnerId = userId;
                 await _projectValidator.ValidateAndThrowAsync( project );
                 Project newProject = await _projectRepository.InsertProject(project);
-                UserProject userProject = new UserProject(
-                    newProject.OwnerId,
-                    newProject.Id,
-                    UserRole.ProjectAdmin
-                );
+                UserProject userProject = new UserProject{
+                    UserId = userId,
+                    ProjectId = newProject.Id,
+                    Role = UserRole.ProjectOwner
+                };
                 if (!await _userProjectService.CreateRelation(userProject))
                 {
                     await _projectRepository.DeleteProject(newProject);

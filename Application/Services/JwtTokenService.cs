@@ -34,8 +34,9 @@ namespace Application.Services
             _dateTimeService = dateTime;
         }
 
-        public string GetTokenFromHeaders(HttpContext context)
+        public async Task<string> GetTokenFromHeaders(HttpContext context)
         {
+            await System.Threading.Tasks.Task.Delay(0);
             string? authorizationHeader = context.Request.Headers.Authorization;
             if (authorizationHeader == null)
                 throw new UnauthorizedAccessException();
@@ -43,18 +44,20 @@ namespace Application.Services
             return token;
         }
 
-        public JwtSecurityToken HandleJWT(string token)
+        public async Task<JwtSecurityToken> HandleJWT(string token)
         {
+            await System.Threading.Tasks.Task.Delay(0);
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
             var handledJWT = handler.ReadJwtToken(token);
             return handledJWT;
         }
 
-        public int GetUserIdFromJwt(HttpContext context)
+        public async Task<Guid?> GetUserIdFromJwt(HttpContext context)
         {
-            string token = GetTokenFromHeaders(context);
-            int user_id = int.Parse(HandleJWT(token).Subject);
-            return user_id;
+            string token = await GetTokenFromHeaders(context);
+            JwtSecurityToken jwt = await HandleJWT(token);
+            Guid? userId = Guid.Parse(jwt.Subject);
+            return userId;
         }
 
         public async Task<string> GenerateJWT(User user)

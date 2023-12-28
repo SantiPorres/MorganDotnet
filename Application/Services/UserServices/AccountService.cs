@@ -15,6 +15,7 @@ using Application.DTOs.AccountDTOs;
 using Application.DTOs.UserDTOs;
 using Application.Interfaces.ServicesInterfaces;
 using Application.Interfaces.UserInterfaces;
+using Domain.CustomEntities;
 
 #endregion
 
@@ -49,17 +50,19 @@ namespace Application.Services.UserServices
             _mapper = mapper;
         }
 
-        public async Task<JwtTokenResponse> LoginUser(LoginUserDTO body)
+        public async Task<TokenAndEntity<UserDTO>> LoginUser(LoginUserDTO body)
         {
             try
             {
                 await _loginUserDTOValidator.ValidateAndThrowAsync(body);
                 User userValid = await ValidateCredentials(body);
                 string token = await _jwtTokenService.GenerateJWT(userValid);
-                return new JwtTokenResponse(
-                    succeeded: true,
-                    token: token
-                );
+                UserDTO userDto = _mapper.Map<UserDTO>(userValid);
+                return new TokenAndEntity<UserDTO>()
+                {
+                    Token = token,
+                    Data = userDto
+                };
             }
             catch (Exception ex) when (
                 ex is DataAccessException 
@@ -94,7 +97,7 @@ namespace Application.Services.UserServices
             catch (Exception ex) { throw new BusinessException(ex.Message); }
         }
 
-        public async Task<Response<UserDTO>> RegisterUser(RegisterUserDTO body)
+        public async Task<UserDTO> RegisterUser(RegisterUserDTO body)
         {
             try
             {
@@ -108,7 +111,7 @@ namespace Application.Services.UserServices
                 user.Password = hashedPassword;
                 User newUser = await _userRepository.Insert(user);
                 UserDTO dto = _mapper.Map<UserDTO>(newUser);
-                return new Response<UserDTO>(dto);
+                return dto;
             }
             catch (Exception ex) when (
                 ex is DataAccessException 
