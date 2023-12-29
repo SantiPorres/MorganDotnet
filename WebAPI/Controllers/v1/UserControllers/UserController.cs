@@ -21,7 +21,7 @@ using Application.DTOs.AccountDTOs;
 
 namespace WebAPI.Controllers.v1.UserControllers
 {
-    [Authorize]
+    //[Authorize]
     [Produces("application/json")]
     public class UserController : BaseApiController
     {

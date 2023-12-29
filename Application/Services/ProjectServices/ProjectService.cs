@@ -12,6 +12,13 @@ using FluentValidation;
 using Domain.CustomExceptions;
 using Domain.Entities;
 using Domain.Enums;
+using Domain.CustomEntities;
+using System.Reflection.Metadata.Ecma335;
+using Microsoft.Extensions.Options;
+using Domain.Options;
+using Microsoft.VisualBasic;
+using System.Collections.ObjectModel;
+using Application.Filters;
 
 #endregion
 
@@ -24,12 +31,14 @@ namespace Application.Services.ProjectServices
         private readonly IValidator<CreateProjectDTO> _createProjectDTOValidator;
         private readonly IUserRepository _userRepository;
         private readonly IUserProjectService _userProjectService;
+        private readonly IOptions<PaginationOptions> _paginationOptions;
         private readonly IMapper _mapper;
 
         public ProjectService(
             IProjectRepository projectRepository,
             IValidator<Project> projectValidator,
             IValidator<CreateProjectDTO> createProjectDTOValidator,
+            IOptions<PaginationOptions> paginationOptions,
             IMapper mapper,
             IUserProjectService userProjectService,
             IUserRepository userRepository)
@@ -37,9 +46,43 @@ namespace Application.Services.ProjectServices
             _projectRepository = projectRepository;
             _createProjectDTOValidator = createProjectDTOValidator;
             _projectValidator = projectValidator;
+            _paginationOptions = paginationOptions;
             _mapper = mapper;
             _userProjectService = userProjectService;
             _userRepository = userRepository;
+        }
+
+        public async Task<PagedList<ProjectDTO>> GetProjectsByUserId(PaginationQueryParameters filters, Guid userId)
+        {
+            try
+            {
+                User user = await _userRepository.GetOneById(
+                    userId,
+                    navigateUserProjects: true
+                ) ?? throw new KeyNotFoundException();
+                ICollection<UserProject>? userProjectRelations = user.UserProjects;
+                if (userProjectRelations is null || userProjectRelations.Count == 0)
+                    return PagedList<ProjectDTO>.CreateEmpty();
+                ICollection<ProjectDTO> userProjectsDtos = new Collection<ProjectDTO>();
+                foreach (UserProject relation in userProjectRelations)
+                {
+                    Project project = await _projectRepository.GetProjectById(
+                        relation.ProjectId,
+                        navigateProjectUsers: false
+                    ) ?? throw new DataAccessException();
+                    ProjectDTO projectDto = _mapper.Map<ProjectDTO>( project );
+                    userProjectsDtos.Add(projectDto);
+                }
+                return PagedList<ProjectDTO>.Create(
+                    userProjectsDtos,
+                    filters.PageNumber ?? _paginationOptions.Value.DefaultPageNumber,
+                    filters.PageSize ?? _paginationOptions.Value.DefaultPageSize
+                );
+            }
+            catch(Exception ex)
+            {
+                throw new BusinessException(ex.Message);
+            }
         }
 
         public async Task<ProjectNavigationDTO> GetProjectById(Guid projectId)

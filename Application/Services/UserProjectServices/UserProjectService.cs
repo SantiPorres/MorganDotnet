@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces.UserProjectInterfaces;
+using Domain.CustomExceptions;
 using Domain.Entities;
 using FluentValidation;
 
@@ -33,6 +34,23 @@ namespace Application.Services.UserProjectServices
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        public async Task<bool> VerifyRelation(Guid projectId, Guid userId)
+        {
+            try
+            {
+                IEnumerable<UserProject> relations = await _userProjectRepository.GetRelations(projectId, userId);
+                if (relations.Any())
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch(Exception ex)
+            {
+                throw new BusinessException(ex.Message);
             }
         }
     }

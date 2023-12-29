@@ -31,5 +31,14 @@
 
             return new PagedList<T>(items, count, pageNumber, pageSize);
         }
+
+        public static PagedList<T> CreateEmpty()
+        {
+            List<T> items = new List<T>();
+            int count = 0;
+            int pageNumber = 0;
+            int pageSize = 0;
+            return new PagedList<T>(items, count, pageNumber, pageSize);
+        }
     }
 }
