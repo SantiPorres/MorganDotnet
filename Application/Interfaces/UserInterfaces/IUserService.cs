@@ -11,6 +11,6 @@ namespace Application.Interfaces.UserInterfaces
 
         Task<UserNavigationDTO> GetUserById(Guid userId);
 
-        Task<UserDTO> InsertUser(RegisterUserDTO body);
+        Task<UserDTO> AddUser(RegisterUserDTO body);
     }
 }

@@ -6,7 +6,7 @@ namespace Application.Interfaces.ProjectInterfaces
     {
         Task<Project?> GetProjectById(Guid projectId, bool navigateProjectUsers);
 
-        Task<Project> InsertProject(Project project);
+        Task<Project> AddAsync(Project project);
 
         Task<bool> DeleteProject(Project project);
     }

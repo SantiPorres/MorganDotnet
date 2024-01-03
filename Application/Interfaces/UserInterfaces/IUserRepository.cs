@@ -2,14 +2,8 @@
 
 namespace Application.Interfaces.UserInterfaces
 {
-    public interface IUserRepository
+    public interface IUserRepository : IRepositoryAsync<User>
     {
-        Task<IEnumerable<User>> GetAllUsers(bool navigateUserProjects);
-
-        Task<User?> GetOneById(Guid userId, bool navigateUserProjects);
-
-        Task<User?> GetOneByEmail(string email);
-
-        Task<User> Insert(User user);
+        Task<User> GetWithNavigationAsync(Guid userId);
     }
 }

@@ -1,6 +1,4 @@
-﻿using Application.Interfaces.ProjectInterfaces;
-using Application.Interfaces.UserInterfaces;
-using Application.Interfaces.UserProjectInterfaces;
+﻿using Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,15 +17,9 @@ namespace Persistence
                 ).LogTo(Console.WriteLine)
             );
 
-            #region Repositories
-
-            services.AddTransient(typeof(IUserRepository), typeof(UserRepository));
-
-            services.AddTransient(typeof(IProjectRepository), typeof(ProjectRepository));
-
-            services.AddTransient(typeof(IUserProjectRepository), typeof(UserProjectRepository));
-
-            #endregion
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped(typeof(IRepositoryAsync<>), typeof(RepositoryAsync<>));
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             services.AddHttpContextAccessor();
         }

@@ -30,7 +30,7 @@ namespace Persistence.Repositories
             return project;
         }
 
-        public async Task<Project> InsertProject(Project project)
+        public async Task<Project> AddAsync(Project project)
         {
             
             var newProject = await _dbContext.Projects.AddAsync(project);

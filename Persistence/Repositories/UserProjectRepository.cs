@@ -1,6 +1,5 @@
 ﻿using Application.Interfaces.UserProjectInterfaces;
 using Domain.Entities;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Contexts;
 namespace Persistence.Repositories

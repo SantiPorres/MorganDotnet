@@ -4,7 +4,7 @@ namespace Domain.Common
 {
     public class AuditableBaseEntity : IAuditableBaseEntity
     {
-        public Guid Id { get; }
+        public Guid Id { get; set; }
         
         public DateTime CreatedAt { get; set; }
 

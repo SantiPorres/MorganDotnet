@@ -56,10 +56,10 @@ namespace WebAPI.Controllers.v1.UserControllers
             return new Response<UserNavigationDTO>(userDto);
         }
 
-        [HttpPost("insert")]
-        public async Task<Response<UserDTO>> InsertUser(RegisterUserDTO user)
+        [HttpPost("add")]
+        public async Task<Response<UserDTO>> AddUser(RegisterUserDTO user)
         {
-            UserDTO userDto = await _userService.InsertUser(user);
+            UserDTO userDto = await _userService.AddUser(user);
             return new Response<UserDTO>(userDto);
         }
     }
