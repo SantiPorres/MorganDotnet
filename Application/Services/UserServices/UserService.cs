@@ -59,12 +59,17 @@ namespace Application.Services.UserServices
             catch (Exception ex) { throw new BusinessException(ex.Message); }
         }
 
-        public async Task<UserNavigationDTO> GetUserById(Guid userId)
+        public async Task<UserDTO> GetUserById(Guid userId, bool? navigable = true)
         {
             try
             {
-                User user = await _unitOfWork.Users.GetWithNavigationAsync(userId);
-                UserNavigationDTO dto = _mapper.Map<UserNavigationDTO>(user);
+                User user;
+                if (navigable == true)
+                    user = await _unitOfWork.Users.GetWithNavigationAsync(userId);
+                else
+                    user = _unitOfWork.Users.Get(userId);
+                UserDTO dto = _mapper.Map<UserDTO>(user);
+                dto.NavigatingUserProjects = navigable;
                 return dto;
             }
             catch (Exception ex) when (
@@ -90,7 +95,7 @@ namespace Application.Services.UserServices
                 string hashedPassword = _passwordHasher.Hash(user.Password);
                 user.Password = hashedPassword;
 
-                User newUser = _unitOfWork.Users.AddAndGet(user);
+                User newUser = await _unitOfWork.Users.AddAndGetAsync(user);
                 await _unitOfWork.Complete();
                 UserDTO dto = _mapper.Map<UserDTO>(newUser);
                 return dto;

@@ -1,5 +1,7 @@
 ﻿using Application.Interfaces.IServices;
 using Application.Services;
+using Application.Services.ProjectServices;
+using Application.Services.UserProjectServices;
 using Application.Services.UserServices;
 using Application.Validators.AccountValidators;
 using Application.Validators.ProjectValidators;
@@ -54,15 +56,15 @@ namespace Application
 
             services.AddScoped<IUserService, UserService>();
 
-            //services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IAccountService, AccountService>();
 
             services.AddTransient<IDateTimeService, DateTimeService>();
 
             services.AddScoped<IPasswordHasher, PasswordHasher>();
 
-            //services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<IProjectService, ProjectService>();
 
-            //services.AddScoped<IUserProjectService, UserProjectService>();
+            services.AddScoped<IUserProjectService, UserProjectService>();
 
             #endregion
         }

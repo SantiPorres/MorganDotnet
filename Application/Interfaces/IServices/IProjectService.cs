@@ -8,7 +8,7 @@ namespace Application.Interfaces.IServices
     {
         Task<PagedList<ProjectDTO>> GetProjectsByUserId(PaginationQueryParameters filters, Guid userId);
 
-        Task<ProjectNavigationDTO> GetProjectById(Guid projectId);
+        Task<ProjectDTO> GetProjectById(Guid projectId, bool? navigable = true);
 
         Task<ProjectDTO> CreateProject(Guid userId, CreateProjectDTO body);
     }

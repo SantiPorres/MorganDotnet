@@ -1,7 +1,10 @@
 ﻿//using Application.DTOs.ProjectDTOs;
+//using Application.Interfaces.IRepositories;
+//using Application.Interfaces.IServices;
 //using Application.Interfaces.ProjectInterfaces;
 //using Application.Interfaces.UserInterfaces;
 //using Application.Interfaces.UserProjectInterfaces;
+//using Application.Services.ProjectServices;
 //using AutoMapper;
 //using Domain.Entities;
 //using Domain.Options;
@@ -57,7 +60,7 @@
 //                Description = "The desc",
 //                ProjectUsers = projectUsers,
 //            };
-//            var expectedDto = new ProjectNavigationDTO
+//            var expectedDto = new ProjectDTO
 //            {
 //                Id = projectId,
 //                Name = project.Name,
@@ -67,7 +70,7 @@
 
 //            _mockProjectRepository.Setup(repo => repo.GetProjectById(projectId, true))
 //                .ReturnsAsync(project);
-//            _mockMapper.Setup(mapper => mapper.Map<ProjectNavigationDTO>(project))
+//            _mockMapper.Setup(mapper => mapper.Map<ProjectDTO>(project))
 //                .Returns(expectedDto);
 
 //            // Act
@@ -76,7 +79,7 @@
 //            // Assert
 //            Assert.Equal(expectedDto, result);
 //            _mockProjectRepository.Verify(repo => repo.GetProjectById(projectId, true), Times.Once);
-//            _mockMapper.Verify(mapper => mapper.Map<ProjectNavigationDTO>(project), Times.Once);
+//            _mockMapper.Verify(mapper => mapper.Map<ProjectDTO>(project), Times.Once);
 //        }
 
 //        [Fact]

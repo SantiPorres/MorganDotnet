@@ -13,7 +13,7 @@ namespace Domain.CustomExceptions
 
         public DataAccessException(string message) : base(message)
         {
-            
+
         }
 
         public DataAccessException(string? message, SqlErrorCollection sqlErrors) : base(message)
