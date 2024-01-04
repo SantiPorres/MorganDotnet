@@ -9,7 +9,7 @@ namespace Application.Interfaces.IServices
     {
         Task<PagedList<UserDTO>> GetAllUsers(PaginationQueryParameters filters);
 
-        Task<UserNavigationDTO> GetUserById(Guid userId);
+        Task<UserDTO> GetUserById(Guid userId, bool? navigable = true);
 
         Task<UserDTO> AddUser(RegisterUserDTO body);
     }

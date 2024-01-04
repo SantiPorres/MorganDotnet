@@ -1,154 +1,134 @@
-﻿//#region Usings
+﻿// Application
+using Application.DTOs.ProjectDTOs;
+using Application.DTOs.UserDTOs;
+using Application.Filters;
+using Application.Interfaces;
+using Application.Interfaces.IServices;
+// External libraries
+using AutoMapper;
+using Domain.CustomEntities;
+// Domain
+using Domain.CustomExceptions;
+using Domain.Entities;
+using Domain.Enums;
+using Domain.Options;
+using FluentValidation;
+using Microsoft.Extensions.Options;
+using System.Collections.ObjectModel;
 
-//// Application
-//using Application.DTOs.ProjectDTOs;
-//using Application.Filters;
-//using Application.Interfaces.ProjectInterfaces;
-//using Application.Interfaces.UserInterfaces;
-//using Application.Interfaces.UserProjectInterfaces;
-//// External libraries
-//using AutoMapper;
-//using Domain.CustomEntities;
-//// Domain
-//using Domain.CustomExceptions;
-//using Domain.Entities;
-//using Domain.Enums;
-//using Domain.Options;
-//using FluentValidation;
-//using Microsoft.Extensions.Options;
-//using System.Collections.ObjectModel;
+namespace Application.Services.ProjectServices
+{
+    public class ProjectService : IProjectService
+    {
+        private readonly IValidator<Project> _projectValidator;
+        private readonly IValidator<CreateProjectDTO> _createProjectDTOValidator;
 
-//#endregion
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUserService _userService;
+        private readonly IUserProjectService _userProjectService;
 
-//namespace Application.Services.ProjectServices
-//{
-//    public class ProjectService : IProjectService
-//    {
-//        private readonly IProjectRepository _projectRepository;
-//        private readonly IValidator<Project> _projectValidator;
-//        private readonly IValidator<CreateProjectDTO> _createProjectDTOValidator;
-//        private readonly IUserRepository _userRepository;
-//        private readonly IUserProjectService _userProjectService;
-//        private readonly IOptions<PaginationOptions> _paginationOptions;
-//        private readonly IMapper _mapper;
+        private readonly IOptions<PaginationOptions> _paginationOptions;
+        private readonly IMapper _mapper;
 
-//        public ProjectService(
-//            IProjectRepository projectRepository,
-//            IValidator<Project> projectValidator,
-//            IValidator<CreateProjectDTO> createProjectDTOValidator,
-//            IOptions<PaginationOptions> paginationOptions,
-//            IMapper mapper,
-//            IUserProjectService userProjectService,
-//            IUserRepository userRepository)
-//        {
-//            _projectRepository = projectRepository;
-//            _createProjectDTOValidator = createProjectDTOValidator;
-//            _projectValidator = projectValidator;
-//            _paginationOptions = paginationOptions;
-//            _mapper = mapper;
-//            _userProjectService = userProjectService;
-//            _userRepository = userRepository;
-//        }
+        public ProjectService(
+            IValidator<Project> projectValidator,
+            IValidator<CreateProjectDTO> createProjectDTOValidator,
+            IOptions<PaginationOptions> paginationOptions,
+            IMapper mapper,
+            IUserProjectService userProjectService,
+            IUnitOfWork unitOfWork,
+            IUserService userService
+        )
+        {
+            _createProjectDTOValidator = createProjectDTOValidator;
+            _projectValidator = projectValidator;
+            _paginationOptions = paginationOptions;
+            _mapper = mapper;
+            _userProjectService = userProjectService;
+            _unitOfWork = unitOfWork;
+            _userService = userService;
+        }
 
-//        public async Task<PagedList<ProjectDTO>> GetProjectsByUserId(PaginationQueryParameters filters, Guid userId)
-//        {
-//            try
-//            {
-//                User user = await _userRepository.GetOneById(
-//                    userId,
-//                    navigateUserProjects: true
-//                ) ?? throw new KeyNotFoundException();
-//                ICollection<UserProject>? userProjectRelations = user.UserProjects;
-//                if (userProjectRelations is null || userProjectRelations.Count == 0)
-//                    return PagedList<ProjectDTO>.CreateEmpty();
-//                ICollection<ProjectDTO> userProjectsDtos = new Collection<ProjectDTO>();
-//                foreach (UserProject relation in userProjectRelations)
-//                {
-//                    Project project = await _projectRepository.GetProjectById(
-//                        relation.ProjectId,
-//                        navigateProjectUsers: false
-//                    ) ?? throw new DataAccessException();
-//                    ProjectDTO projectDto = _mapper.Map<ProjectDTO>(project);
-//                    userProjectsDtos.Add(projectDto);
-//                }
-//                return PagedList<ProjectDTO>.Create(
-//                    userProjectsDtos,
-//                    filters.PageNumber ?? _paginationOptions.Value.DefaultPageNumber,
-//                    filters.PageSize ?? _paginationOptions.Value.DefaultPageSize
-//                );
-//            }
-//            catch (Exception ex)
-//            {
-//                throw new BusinessException(ex.Message);
-//            }
-//        }
+        public async Task<PagedList<ProjectDTO>> GetProjectsByUserId(PaginationQueryParameters filters, Guid userId)
+        {
+            try
+            {
+                UserDTO user = await _userService.GetUserById(userId, true);
+                ICollection<UserProject>? userProjectRelations = user.UserProjects;
+                if (userProjectRelations is null || userProjectRelations.Count == 0)
+                    return PagedList<ProjectDTO>.CreateEmpty();
+                ICollection<ProjectDTO> projectsDTOs = new Collection<ProjectDTO>();
+                foreach (UserProject relation in userProjectRelations)
+                {
+                    ProjectDTO projectDto = await GetProjectById(
+                        relation.ProjectId, 
+                        false
+                    );
+                    projectsDTOs.Add(projectDto);
+                }
+                return PagedList<ProjectDTO>.Create(
+                    projectsDTOs,
+                    filters.PageNumber ?? _paginationOptions.Value.DefaultPageNumber,
+                    filters.PageSize ?? _paginationOptions.Value.DefaultPageSize
+                );
+            }
+            catch (Exception ex) when (
+                ex is KeyNotFoundException
+                || ex is DataAccessException
+                || ex is BusinessException
+            )
+            { throw; }
+            catch (Exception ex) { throw new BusinessException(ex.Message); }
+        }
 
-//        public async Task<ProjectNavigationDTO> GetProjectById(Guid projectId)
-//        {
-//            try
-//            {
-//                Project project = await _projectRepository.GetProjectById(
-//                    projectId,
-//                    navigateProjectUsers: true
-//                ) ?? throw new KeyNotFoundException();
-//                ProjectNavigationDTO dto = _mapper.Map<ProjectNavigationDTO>(project);
-//                return dto;
-//            }
-//            catch (KeyNotFoundException)
-//            {
-//                throw;
-//            }
-//            catch (Exception ex)
-//            {
-//                throw new BusinessException(ex.Message);
-//            }
-//        }
+        public async Task<ProjectDTO> GetProjectById(Guid projectId, bool? navigable = true)
+        {
+            try
+            {
+                Project project;
+                if (navigable == true)
+                    project = await _unitOfWork.Projects.GetWithNavigationAsync(projectId);
+                else
+                    project = await _unitOfWork.Projects.GetAsync(projectId);
+                ProjectDTO dto = _mapper.Map<ProjectDTO>(project);
+                return dto;
+            }
+            catch (Exception ex) when (
+                ex is KeyNotFoundException
+                || ex is DataAccessException
+                || ex is BusinessException
+            )
+            { throw; }
+            catch (Exception ex) { throw new BusinessException(ex.Message); }
+        }
 
-//        public async Task<ProjectDTO> CreateProject(Guid userId, CreateProjectDTO body)
-//        {
-//            try
-//            {
-//                User user = await _userRepository.GetOneById(
-//                    userId,
-//                    navigateUserProjects: false
-//                ) ?? throw new KeyNotFoundException("User not found");
-//                await _createProjectDTOValidator.ValidateAndThrowAsync(body);
-//                Project project = _mapper.Map<Project>(body);
-//                await _projectValidator.ValidateAndThrowAsync(project);
-//                Project newProject = await _projectRepository.InsertProject(project);
-//                UserProject userProject = new UserProject
-//                {
-//                    UserId = userId,
-//                    ProjectId = newProject.Id,
-//                    Role = UserRole.ProjectOwner
-//                };
-//                //try
-//                //{
-//                //    await _userProjectService.CreateRelation(userProject);
-//                //}
-//                //catch (Exception ex)
-//                //{
-//                //    await _projectRepository.DeleteProject(newProject);
-//                //    throw new BusinessException(ex.Message);
-//                //}
-//                if (!await _userProjectService.CreateRelation(userProject))
-//                {
-//                    await _projectRepository.DeleteProject(newProject);
-//                    throw new BusinessException("Project creation failed");
-//                }
-//                ProjectDTO dto = _mapper.Map<ProjectDTO>(newProject);
-//                return dto;
-//            }
-//            catch (Exception ex) when (
-//                ex is FluentValidation.ValidationException
-//            )
-//            {
-//                throw;
-//            }
-//            catch (Exception ex)
-//            {
-//                throw new BusinessException(ex.Message);
-//            }
-//        }
-//    }
-//}
+        public async Task<ProjectDTO> CreateProject(Guid userId, CreateProjectDTO body)
+        {
+            try
+            {
+                UserDTO user = await _userService.GetUserById(userId, false);
+                await _createProjectDTOValidator.ValidateAndThrowAsync(body);
+                Project project = _mapper.Map<Project>(body);
+                await _projectValidator.ValidateAndThrowAsync(project);
+                Project newProject = await _unitOfWork.Projects.AddAndGetAsync(project);
+                UserProject userProject = new UserProject
+                {
+                    UserId = user.Id,
+                    ProjectId = newProject.Id,
+                    Role = UserRole.ProjectOwner
+                };
+                await _userProjectService.CreateRelation(userProject);
+                await _unitOfWork.Complete();
+                ProjectDTO dto = _mapper.Map<ProjectDTO>(newProject);
+                return dto;
+            }
+            catch (Exception ex) when (
+                ex is DataAccessException
+                || ex is FluentValidation.ValidationException
+                || ex is BusinessException
+            )
+            { throw; }
+            catch (Exception ex) { throw new BusinessException(ex.Message); }
+        }
+    }
+}

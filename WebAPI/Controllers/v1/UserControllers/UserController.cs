@@ -1,23 +1,11 @@
-﻿#region Usings
-
-// Application
-using Application.Filters;
-using Application.Wrappers;
-
-// Domain
-using Domain.CustomEntities;
-
-// WebAPI
-using WebAPI.Controllers.v1.Common;
-
-// Internal libraries
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Application.DTOs.AccountDTOs;
 using Application.DTOs.UserDTOs;
-using Application.DTOs.AccountDTOs;
+using Application.Filters;
 using Application.Interfaces.IServices;
-
-#endregion
+using Application.Wrappers;
+using Domain.CustomEntities;
+using Microsoft.AspNetCore.Mvc;
+using WebAPI.Controllers.v1.Common;
 
 namespace WebAPI.Controllers.v1.UserControllers
 {
@@ -50,10 +38,10 @@ namespace WebAPI.Controllers.v1.UserControllers
         }
 
         [HttpGet("single")]
-        public async Task<Response<UserNavigationDTO>> GetUserById([FromQuery] Guid userId)
+        public async Task<Response<UserDTO>> GetUserById([FromQuery] Guid userId)
         {
-            UserNavigationDTO userDto = await _userService.GetUserById(userId);
-            return new Response<UserNavigationDTO>(userDto);
+            UserDTO userDto = await _userService.GetUserById(userId, true);
+            return new Response<UserDTO>(userDto);
         }
 
         [HttpPost("add")]

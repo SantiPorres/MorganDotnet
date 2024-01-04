@@ -1,4 +1,5 @@
-﻿using Application.DTOs.AccountDTOs;
+﻿using Application.DTOs;
+using Application.DTOs.AccountDTOs;
 using Application.DTOs.ProjectDTOs;
 using Application.DTOs.UserDTOs;
 using AutoMapper;
@@ -10,11 +11,9 @@ namespace Application.Mappings
     {
         public AutomapperProfile()
         {
-            #region UserDTOs
+            #region User
 
             CreateMap<User, UserDTO>().ReverseMap();
-
-            CreateMap<User, UserNavigationDTO>().ReverseMap();
 
             CreateMap<User, RegisterUserDTO>().ReverseMap();
 
@@ -22,13 +21,17 @@ namespace Application.Mappings
 
             #endregion
 
-            #region ProjectDTOs
+            #region Project
 
             CreateMap<Project, ProjectDTO>().ReverseMap();
 
-            CreateMap<Project, ProjectNavigationDTO>().ReverseMap();
-
             CreateMap<Project, CreateProjectDTO>().ReverseMap();
+
+            #endregion
+
+            #region UserProject
+
+            CreateMap<UserProject, UserProjectDTO>();
 
             #endregion
         }
