@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Domain.Entities
 {
-    public class Task : AuditableBaseEntity
+    public class Assignment : AuditableBaseEntity
     {
         [Required]
         [AllowedValues(typeof(string))]

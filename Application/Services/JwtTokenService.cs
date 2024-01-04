@@ -1,7 +1,7 @@
 ﻿#region Usings
 
 // Application
-using Application.Interfaces.ServicesInterfaces;
+using Application.Interfaces.IServices;
 
 
 // Domain

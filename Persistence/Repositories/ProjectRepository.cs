@@ -1,52 +1,35 @@
-﻿using Application.Interfaces.ProjectInterfaces;
+﻿using Application.Interfaces.IRepositories;
+using Domain.CustomExceptions;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Contexts;
 
 namespace Persistence.Repositories
 {
-    public class ProjectRepository : IProjectRepository
+    public class ProjectRepository : RepositoryAsync<Project>, IProjectRepository
     {
-        private readonly ApplicationDbContext _dbContext;
-
         public ProjectRepository(ApplicationDbContext dbContext)
+            : base(dbContext) 
         {
-            _dbContext = dbContext;
         }
 
-        public async Task<Project?> GetProjectById(Guid projectId, bool navigateProjectUsers)
+        public async Task<Project> GetWithNavigationAsync(Guid projectId)
         {
-            Project? project;
-            if (navigateProjectUsers)
+            try
             {
-                project = await _dbContext.Projects
-                    .Include(p => p.ProjectUsers)
-                    .SingleOrDefaultAsync(x => x.Id == projectId);
-            } else
-            {
-                project = await _dbContext.Projects
-                    .SingleOrDefaultAsync(x => x.Id == projectId);
+                Project project = await Context.Set<Project>()
+                    .Include(project => project.ProjectUsers)
+                    .SingleOrDefaultAsync(project => project.Id == projectId)
+                    ?? throw new KeyNotFoundException("Project does not exist");
+                return project;
             }
-            return project;
+            catch (KeyNotFoundException) { throw; }
+            catch (Exception) { throw new DataAccessException(); }
         }
 
-        public async Task<Project> AddAsync(Project project)
+        public ApplicationDbContext ApplicationDbContext
         {
-            
-            var newProject = await _dbContext.Projects.AddAsync(project);
-            await _dbContext.SaveChangesAsync();
-            return newProject.Entity;
-        }
-
-        public async Task<bool> DeleteProject(Project project)
-        {
-            _dbContext.Projects.Remove(project);
-            int rowsAffected = await _dbContext.SaveChangesAsync();
-            if (rowsAffected > 0)
-            {
-                return true;
-            }
-            return false;
+            get { return Context as ApplicationDbContext ?? throw new DataAccessException(); }
         }
     }
 }

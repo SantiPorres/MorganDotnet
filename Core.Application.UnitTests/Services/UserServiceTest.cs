@@ -2,6 +2,7 @@
 using Application.DTOs.UserDTOs;
 using Application.Filters;
 using Application.Interfaces;
+using Application.Interfaces.IServices;
 using Application.Services.UserServices;
 using AutoMapper;
 using Domain.CustomEntities;

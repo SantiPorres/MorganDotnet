@@ -22,41 +22,7 @@ namespace Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.Entities.Project", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.Property<DateTime>("LastModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("LastModifiedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(80)
-                        .HasColumnType("nvarchar(80)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Projects", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.Entities.Task", b =>
+            modelBuilder.Entity("Domain.Entities.Assignment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -97,7 +63,41 @@ namespace Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Tasks", (string)null);
+                    b.ToTable("Assignments", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Project", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime>("LastModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("LastModifiedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Projects", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -178,18 +178,18 @@ namespace Persistence.Migrations
                     b.ToTable("UserProjects", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Task", b =>
+            modelBuilder.Entity("Domain.Entities.Assignment", b =>
                 {
                     b.HasOne("Domain.Entities.Project", null)
-                        .WithMany("Tasks")
+                        .WithMany("Assignments")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.User", null)
-                        .WithMany("Tasks")
+                        .WithMany("Assignments")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("Domain.Entities.UserProject", b =>
@@ -197,26 +197,26 @@ namespace Persistence.Migrations
                     b.HasOne("Domain.Entities.Project", null)
                         .WithMany("ProjectUsers")
                         .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.User", null)
                         .WithMany("UserProjects")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entities.Project", b =>
                 {
-                    b.Navigation("ProjectUsers");
+                    b.Navigation("Assignments");
 
-                    b.Navigation("Tasks");
+                    b.Navigation("ProjectUsers");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
-                    b.Navigation("Tasks");
+                    b.Navigation("Assignments");
 
                     b.Navigation("UserProjects");
                 });

@@ -1,6 +1,4 @@
-﻿using Application.Interfaces;
-using Application.Interfaces.ServicesInterfaces;
-using Application.Interfaces.UserInterfaces;
+﻿using Application.Interfaces.IServices;
 using Application.Services;
 using Application.Services.UserServices;
 using Application.Validators.AccountValidators;

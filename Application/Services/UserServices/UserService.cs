@@ -3,7 +3,6 @@ using Application.DTOs.AccountDTOs;
 using Application.DTOs.UserDTOs;
 using Application.Filters;
 using Application.Interfaces;
-using Application.Interfaces.UserInterfaces;
 // Domain
 using Domain.CustomEntities;
 using Domain.CustomExceptions;
@@ -14,6 +13,7 @@ using Microsoft.Extensions.Options;
 // External libraries
 using AutoMapper;
 using FluentValidation;
+using Application.Interfaces.IServices;
 
 namespace Application.Services.UserServices
 {

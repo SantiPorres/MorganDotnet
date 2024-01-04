@@ -1,26 +1,27 @@
-﻿using FluentValidation;
+﻿using Domain.Entities;
+using FluentValidation;
 
 namespace Domain.Validators
 {
-    public class TaskValidator : AbstractValidator<Entities.Task>
+    public class AssignmentValidator : AbstractValidator<Assignment>
     {
-        public TaskValidator()
+        public AssignmentValidator()
         {
-            RuleFor(task => task.Title)
+            RuleFor(a => a.Title)
                 .NotEmpty()
                 .WithMessage("{PropertyName} must not be empty")
                 .MaximumLength(80)
                 .WithMessage("{PropertyName} must be shorter than {MaxLength} characters");
 
-            RuleFor(task => task.Description)
+            RuleFor(a => a.Description)
                 .MaximumLength(300)
                 .WithMessage("{PropertyName} must be shorter than {MaxLength} characters");
 
-            RuleFor(task => task.ProjectId)
+            RuleFor(a => a.ProjectId)
                 .NotEmpty()
                 .WithMessage("{PropertyName} must not be empty");
 
-            RuleFor(task => task.UserId);
+            RuleFor(a => a.UserId);
         }
     }
 }

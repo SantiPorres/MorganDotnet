@@ -1,4 +1,4 @@
-﻿using Application.Interfaces.UserInterfaces;
+﻿using Application.Interfaces.IRepositories;
 using Domain.CustomExceptions;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;

@@ -3,7 +3,7 @@ using Application.DTOs.UserDTOs;
 using Application.Filters;
 using Domain.CustomEntities;
 
-namespace Application.Interfaces.UserInterfaces
+namespace Application.Interfaces.IServices
 {
     public interface IUserService
     {

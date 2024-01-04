@@ -2,7 +2,7 @@
 using Application.Filters;
 using Domain.CustomEntities;
 
-namespace Application.Interfaces.ProjectInterfaces
+namespace Application.Interfaces.IServices
 {
     public interface IProjectService
     {
