@@ -14,8 +14,8 @@ using WebAPI.Controllers.v1.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Application.DTOs.UserDTOs;
-using Application.Interfaces.UserInterfaces;
 using Application.DTOs.AccountDTOs;
+using Application.Interfaces.IServices;
 
 #endregion
 

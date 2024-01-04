@@ -1,6 +1,4 @@
-﻿#region Usings
-
-// Application
+﻿// Application
 using Application.Wrappers;
 
 // WebAPI
@@ -10,10 +8,7 @@ using WebAPI.Controllers.v1.Common;
 using Microsoft.AspNetCore.Mvc;
 using Application.DTOs.AccountDTOs;
 using Application.DTOs.UserDTOs;
-using Application.Interfaces.UserInterfaces;
 using Domain.CustomEntities;
-
-#endregion
 
 namespace WebAPI.Controllers.v1.AccountControllers
 {

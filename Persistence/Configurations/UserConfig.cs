@@ -28,8 +28,9 @@ namespace Persistence.Configurations
                 .WithOne()
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasMany(x => x.Tasks)
-                .WithOne();
+            builder.HasMany(x => x.Assignments)
+                .WithOne()
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

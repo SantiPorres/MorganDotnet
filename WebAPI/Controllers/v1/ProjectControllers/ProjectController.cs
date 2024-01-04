@@ -1,8 +1,5 @@
 ﻿using Application.DTOs.ProjectDTOs;
 using Application.Filters;
-using Application.Interfaces.ProjectInterfaces;
-using Application.Interfaces.ServicesInterfaces;
-using Application.Interfaces.UserProjectInterfaces;
 using Application.Wrappers;
 using Domain.CustomEntities;
 using Microsoft.AspNetCore.Authorization;

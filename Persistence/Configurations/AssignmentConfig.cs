@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Persistence.Configurations
 {
-    public class TaskConfig : BaseEntityConfig<Domain.Entities.Task>
+    public class AssignmentConfig : BaseEntityConfig<Assignment>
     {
-        public override void Configure(EntityTypeBuilder<Domain.Entities.Task> builder)
+        public override void Configure(EntityTypeBuilder<Assignment> builder)
         {
             base.Configure(builder);
 
-            builder.ToTable("Tasks");
+            builder.ToTable("Assignments");
 
             builder.Property(x => x.Title)
                 .IsRequired()
@@ -20,13 +20,13 @@ namespace Persistence.Configurations
                 .HasMaxLength(300);
 
             builder.HasOne<Project>()
-                .WithMany(p => p.Tasks)
+                .WithMany(p => p.Assignments)
                 .HasForeignKey(x => x.ProjectId)
                 .IsRequired()
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasOne<User>()
-                .WithMany(p => p.Tasks)
+                .WithMany(u => u.Assignments)
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
         }

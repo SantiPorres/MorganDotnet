@@ -1,4 +1,4 @@
-﻿using Application.Interfaces.ServicesInterfaces;
+﻿using Application.Interfaces.IServices;
 using Domain.Common;
 using Domain.Entities;
 using Microsoft.AspNetCore.Http;
@@ -29,7 +29,7 @@ namespace Persistence.Contexts
 
         public DbSet<User> Users { get; set; }
         public DbSet<Project> Projects { get; set; }
-        public DbSet<Domain.Entities.Task> Tasks { get; set; }
+        public DbSet<Assignment> Assignments { get; set; }
         public DbSet<UserProject> UserProjects { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())

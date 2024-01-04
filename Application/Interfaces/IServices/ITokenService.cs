@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace Application.Interfaces.ServicesInterfaces
+namespace Application.Interfaces.IServices
 {
     public interface ITokenService
     {

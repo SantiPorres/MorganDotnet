@@ -1,6 +1,6 @@
 ﻿using Domain.Entities;
 
-namespace Application.Interfaces.UserProjectInterfaces
+namespace Application.Interfaces.IServices
 {
     public interface IUserProjectService
     {

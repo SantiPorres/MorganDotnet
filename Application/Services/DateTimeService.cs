@@ -1,4 +1,4 @@
-﻿using Application.Interfaces.ServicesInterfaces;
+﻿using Application.Interfaces.IServices;
 
 namespace Application.Services
 {

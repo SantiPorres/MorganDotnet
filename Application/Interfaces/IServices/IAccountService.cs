@@ -4,7 +4,7 @@ using Application.Wrappers;
 using Domain.CustomEntities;
 using Domain.Entities;
 
-namespace Application.Interfaces.UserInterfaces
+namespace Application.Interfaces.IServices
 {
     public interface IAccountService
     {

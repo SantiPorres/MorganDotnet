@@ -20,7 +20,7 @@ namespace Domain.Entities
         public required string Password { get; set; }
 
         public ICollection<UserProject>? UserProjects { get; set; }
-        public ICollection<Task>? Tasks { get; set; }
+        public ICollection<Assignment>? Assignments { get; set; }
 
         public new virtual Guid? CreatedBy { get; } = null;
         public new virtual Guid? LastModifiedBy { get; set; } = null;

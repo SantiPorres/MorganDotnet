@@ -16,6 +16,6 @@ namespace Domain.Entities
         public string? Description { get; set; }
 
         public ICollection<UserProject>? ProjectUsers { get; set; }
-        public ICollection<Task>? Tasks { get; set; }
+        public ICollection<Assignment>? Assignments { get; set; }
     }
 }

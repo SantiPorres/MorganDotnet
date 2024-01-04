@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace Application.Interfaces
+namespace Application.Interfaces.IRepositories
 {
     public interface IRepositoryAsync<T> : IRepository<T> where T : class
     {

@@ -1,5 +1,5 @@
 ﻿using Application.Interfaces;
-using Application.Interfaces.UserInterfaces;
+using Application.Interfaces.IRepositories;
 using Persistence.Contexts;
 using Persistence.Repositories;
 
@@ -13,9 +13,15 @@ namespace Persistence
         {
             _context = context;
             Users = new UserRepository(_context);
+            Projects = new ProjectRepository(_context);
+            UsersProjects = new UserProjectRepository(_context);
+            Assignments = new AssignmentRepository(_context);
         }
 
         public IUserRepository Users { get; private set; }
+        public IProjectRepository Projects { get; private set; }
+        public IUserProjectRepository UsersProjects { get; private set; }
+        public IAssignmentRepository Assignments { get; private set; }
 
         public async Task<int> Complete()
         {
