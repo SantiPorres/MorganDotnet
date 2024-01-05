@@ -7,16 +7,16 @@ using Application.Interfaces.IServices;
 
 // External libraries
 using AutoMapper;
-using Domain.CustomEntities;
-// Domain
-using Domain.CustomExceptions;
-using Domain.Entities;
-using Domain.Enums;
-using Domain.Options;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Options;
 using System.Collections.ObjectModel;
+// Domain
+using Domain.CustomEntities;
+using Domain.CustomExceptions;
+using Domain.Entities;
+using Domain.Enums;
+using Domain.Options;
 
 namespace Application.Services.ProjectServices
 {
@@ -132,7 +132,7 @@ namespace Application.Services.ProjectServices
                 {
                     UserId = user.Id,
                     ProjectId = newProject.Id,
-                    Role = UserRole.ProjectOwner
+                    Role = UserRole.ProjectAdmin
                 };
                 await _userProjectService.CreateRelation(userProject);
                 await _unitOfWork.Complete();

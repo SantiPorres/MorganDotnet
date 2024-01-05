@@ -1,4 +1,5 @@
-﻿using Application.DTOs.ProjectDTOs;
+﻿using Application.DTOs;
+using Application.DTOs.ProjectDTOs;
 using Application.Filters;
 using Application.Interfaces.IServices;
 using Application.Wrappers;
@@ -48,18 +49,18 @@ namespace WebAPI.Controllers.v1.ProjectControllers
             );
         }
 
-        //[HttpGet("single")]
-        //public async Task<Response<ProjectDTO>> GetProjectById([FromQuery] Guid projectId)
-        //{
-        //    Guid userId = await _tokenService.GetUserIdFromJwt(HttpContext) ?? throw new UnauthorizedAccessException();
-        //    bool isRelated = await _userProjectService.VerifyRelation(projectId, userId);
-        //    if (isRelated)
-        //    {
-        //        ProjectDTO projectDto = await _projectService.GetProjectById(projectId);
-        //        return new Response<ProjectDTO>(projectDto);
-        //    }
-        //    throw new UnauthorizedAccessException("The user is not related to the project");
-        //}
+        [HttpGet("single")]
+        public async Task<Response<ProjectDTO>> GetProjectById([FromQuery] Guid projectId)
+        {
+            Guid userId = await _tokenService.GetUserIdFromJwt(HttpContext) ?? throw new UnauthorizedAccessException();
+            IEnumerable<UserProjectDTO> relations = await _userProjectService.GetAllRelations(projectId, userId);
+            if (relations.Any())
+            {
+                ProjectDTO projectDto = await _projectService.GetProjectById(projectId);
+                return new Response<ProjectDTO>(projectDto);
+            }
+            throw new UnauthorizedAccessException("The user is not related to the project");
+        }
 
         [HttpPost]
         public async Task<Response<ProjectDTO>> CreateProject(CreateProjectDTO body)

@@ -16,10 +16,8 @@ namespace Domain.Validators
                 .WithMessage("{PropertyName} must not be empty");
 
             RuleFor(userProject => userProject.Role)
-                .NotEmpty()
-                .WithMessage("{PropertyName} must not be empty");
-                //.IsInEnum()
-                //.WithMessage("{PropertyValue} is not a valid {PropertyName}");
+                .IsInEnum()
+                .WithMessage("{PropertyValue} is not a valid {PropertyName}");
         }
     }
 }
