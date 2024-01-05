@@ -6,7 +6,7 @@ namespace Application.Interfaces.IServices
 {
     public interface IProjectService
     {
-        Task<PagedList<ProjectDTO>> GetProjectsByUserId(PaginationQueryParameters filters, Guid userId);
+        Task<PagedList<ProjectDTO>> GetAllProjectsByUserId(PaginationQueryParameters filters, Guid userId);
 
         Task<ProjectDTO> GetProjectById(Guid projectId, bool? navigable = true);
 

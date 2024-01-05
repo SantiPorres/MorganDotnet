@@ -31,7 +31,7 @@ namespace WebAPI.Controllers.v1.ProjectControllers
         public async Task<PagedResponse<PagedList<ProjectDTO>>> GetProjectsByUserId([FromQuery] PaginationQueryParameters filters)
         {
             Guid userId = await _tokenService.GetUserIdFromJwt(HttpContext) ?? throw new UnauthorizedAccessException();
-            PagedList<ProjectDTO> pagedProjects = await _projectService.GetProjectsByUserId(filters, userId);
+            PagedList<ProjectDTO> pagedProjects = await _projectService.GetAllProjectsByUserId(filters, userId);
             string? message = null;
             if (pagedProjects.TotalCount == 0)
                 message = "The user does not have any project";

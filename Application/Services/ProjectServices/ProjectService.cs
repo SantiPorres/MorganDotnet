@@ -4,6 +4,7 @@ using Application.DTOs.UserDTOs;
 using Application.Filters;
 using Application.Interfaces;
 using Application.Interfaces.IServices;
+
 // External libraries
 using AutoMapper;
 using Domain.CustomEntities;
@@ -13,6 +14,7 @@ using Domain.Entities;
 using Domain.Enums;
 using Domain.Options;
 using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.Extensions.Options;
 using System.Collections.ObjectModel;
 
@@ -22,6 +24,7 @@ namespace Application.Services.ProjectServices
     {
         private readonly IValidator<Project> _projectValidator;
         private readonly IValidator<CreateProjectDTO> _createProjectDTOValidator;
+        private readonly IValidator<PaginationQueryParameters> _paginationQueryParametersValidator;
 
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserService _userService;
@@ -33,35 +36,48 @@ namespace Application.Services.ProjectServices
         public ProjectService(
             IValidator<Project> projectValidator,
             IValidator<CreateProjectDTO> createProjectDTOValidator,
-            IOptions<PaginationOptions> paginationOptions,
-            IMapper mapper,
-            IUserProjectService userProjectService,
+            IValidator<PaginationQueryParameters> paginationQueryParametersValidator,
+
             IUnitOfWork unitOfWork,
-            IUserService userService
+            IUserService userService,
+            IUserProjectService userProjectService,
+
+            IOptions<PaginationOptions> paginationOptions,
+            IMapper mapper
         )
         {
-            _createProjectDTOValidator = createProjectDTOValidator;
             _projectValidator = projectValidator;
-            _paginationOptions = paginationOptions;
-            _mapper = mapper;
-            _userProjectService = userProjectService;
+            _createProjectDTOValidator = createProjectDTOValidator;
+            _paginationQueryParametersValidator = paginationQueryParametersValidator;
+
             _unitOfWork = unitOfWork;
             _userService = userService;
+            _userProjectService = userProjectService;
+
+            _paginationOptions = paginationOptions;
+            _mapper = mapper;
         }
 
-        public async Task<PagedList<ProjectDTO>> GetProjectsByUserId(PaginationQueryParameters filters, Guid userId)
+        public async Task<PagedList<ProjectDTO>> GetAllProjectsByUserId(PaginationQueryParameters filters, Guid userId)
         {
             try
             {
-                UserDTO user = await _userService.GetUserById(userId, true);
-                ICollection<UserProject>? userProjectRelations = user.UserProjects;
+                ValidationResult validationResult = await _paginationQueryParametersValidator.ValidateAsync(
+                    filters
+                );
+                if (validationResult.IsValid == false)
+                    throw new FluentValidation.ValidationException(
+                        validationResult.Errors
+                    );
+                UserDTO userDto = await _userService.GetUserById(userId, true);
+                ICollection<UserProject>? userProjectRelations = userDto.UserProjects;
                 if (userProjectRelations is null || userProjectRelations.Count == 0)
                     return PagedList<ProjectDTO>.CreateEmpty();
                 ICollection<ProjectDTO> projectsDTOs = new Collection<ProjectDTO>();
                 foreach (UserProject relation in userProjectRelations)
                 {
                     ProjectDTO projectDto = await GetProjectById(
-                        relation.ProjectId, 
+                        relation.ProjectId,
                         false
                     );
                     projectsDTOs.Add(projectDto);
@@ -74,6 +90,7 @@ namespace Application.Services.ProjectServices
             }
             catch (Exception ex) when (
                 ex is KeyNotFoundException
+                || ex is FluentValidation.ValidationException
                 || ex is DataAccessException
                 || ex is BusinessException
             )

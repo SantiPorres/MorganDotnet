@@ -3,6 +3,7 @@ using Application.DTOs.AccountDTOs;
 using Application.DTOs.UserDTOs;
 using Application.Filters;
 using Application.Interfaces;
+using Application.Interfaces.IServices;
 // Domain
 using Domain.CustomEntities;
 using Domain.CustomExceptions;
@@ -13,33 +14,40 @@ using Microsoft.Extensions.Options;
 // External libraries
 using AutoMapper;
 using FluentValidation;
-using Application.Interfaces.IServices;
+using FluentValidation.Results;
 
 namespace Application.Services.UserServices
 {
     public class UserService : IUserService
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IValidator<User> _userValidator;
         private readonly IValidator<RegisterUserDTO> _registerUserDTOValidator;
+
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IPasswordHasher _passwordHasher;
+
         private readonly IOptions<PaginationOptions> _paginationOptions;
         private readonly IMapper _mapper;
 
         public UserService(
             IValidator<User> userValidator,
             IValidator<RegisterUserDTO> registerUserDTOValidator,
-            IOptions<PaginationOptions> paginationOptions,
-            IMapper mapper,
+
+            IUnitOfWork unitOfWork,
             IPasswordHasher passwordHasher,
-            IUnitOfWork unitOfWork)
+
+            IOptions<PaginationOptions> paginationOptions,
+            IMapper mapper
+        )
         {
             _userValidator = userValidator;
             _registerUserDTOValidator = registerUserDTOValidator;
+
+            _unitOfWork = unitOfWork;
+            _passwordHasher = passwordHasher;
+
             _paginationOptions = paginationOptions;
             _mapper = mapper;
-            _passwordHasher = passwordHasher;
-            _unitOfWork = unitOfWork;
         }
 
         public async Task<PagedList<UserDTO>> GetAllUsers(PaginationQueryParameters filters)
@@ -67,7 +75,7 @@ namespace Application.Services.UserServices
                 if (navigable == true)
                     user = await _unitOfWork.Users.GetWithNavigationAsync(userId);
                 else
-                    user = _unitOfWork.Users.Get(userId);
+                    user = await _unitOfWork.Users.GetAsync(userId);
                 UserDTO dto = _mapper.Map<UserDTO>(user);
                 dto.NavigatingUserProjects = navigable;
                 return dto;
@@ -84,14 +92,23 @@ namespace Application.Services.UserServices
         {
             try
             {
-                await _registerUserDTOValidator.ValidateAndThrowAsync(body);
+                // FluentValidation.ValidateAndThrowAsync method is not testeable
+                ValidationResult bodyValidationResult = await _registerUserDTOValidator.ValidateAsync(body);
+                if (bodyValidationResult.IsValid == false)
+                    throw new FluentValidation.ValidationException(
+                        bodyValidationResult.Errors
+                    );
                 IEnumerable<User> emailExists = await _unitOfWork.Users.FindAsync(
                     user => user.Email == body.Email
                 );
                 if (emailExists.Count() > 0)
                     throw new BusinessException("There is already an existing account with this email");
                 User user = _mapper.Map<User>(body);
-                await _userValidator.ValidateAndThrowAsync(user);
+                ValidationResult userValidationResult = await _userValidator.ValidateAsync(user);
+                if (userValidationResult.IsValid == false)
+                    throw new FluentValidation.ValidationException(
+                        userValidationResult.Errors
+                    );
                 string hashedPassword = _passwordHasher.Hash(user.Password);
                 user.Password = hashedPassword;
 
