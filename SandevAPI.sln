@@ -23,13 +23,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1627420F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{6CDF5242-8E5C-4172-991F-4C301A4AFCCA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Application.UnitTests", "Core.Application.UnitTests\Core.Application.UnitTests.csproj", "{159CE321-36E7-49B6-86CD-F5D4910CF55F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Application.UnitTests", "Core.Application.UnitTests\Core.Application.UnitTests.csproj", "{159CE321-36E7-49B6-86CD-F5D4910CF55F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Domain.UnitTests", "Core.Domain.UnitTests\Core.Domain.UnitTests.csproj", "{A8F8A4AC-0ACE-4FCF-B188-0AEFA2F17B97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Domain.UnitTests", "Core.Domain.UnitTests\Core.Domain.UnitTests.csproj", "{A8F8A4AC-0ACE-4FCF-B188-0AEFA2F17B97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.Persistence.UnitTests", "Infrastructure.Persistence.UnitTests\Infrastructure.Persistence.UnitTests.csproj", "{26329934-B2F9-4019-900C-13212BDC0716}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.Persistence.UnitTests", "Infrastructure.Persistence.UnitTests\Infrastructure.Persistence.UnitTests.csproj", "{26329934-B2F9-4019-900C-13212BDC0716}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentation.WebAPI.UnitTests", "Presentation.WebAPI.UnitTests\Presentation.WebAPI.UnitTests.csproj", "{B0D71BA0-C454-4EDD-ADE8-DC7B237F6C08}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Presentation.WebAPI.UnitTests", "Presentation.WebAPI.UnitTests\Presentation.WebAPI.UnitTests.csproj", "{B0D71BA0-C454-4EDD-ADE8-DC7B237F6C08}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

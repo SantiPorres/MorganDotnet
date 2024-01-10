@@ -5,6 +5,7 @@ using AutoMapper;
 using Domain.CustomExceptions;
 using Domain.Entities;
 using FluentValidation;
+using FluentValidation.Results;
 
 namespace Application.Services.UserProjectServices
 {
@@ -29,11 +30,13 @@ namespace Application.Services.UserProjectServices
         {
             try
             {
-                //var validation = await _userProjectValidator.ValidateAsync( userProject );
-                //if (!validation.IsValid)
-                //{
-                //    return false;
-                //}
+                ValidationResult validation = await _userProjectValidator.ValidateAsync(userProject);
+                if (validation.IsValid == false)
+                {
+                    throw new FluentValidation.ValidationException(
+                        validation.Errors    
+                    );
+                }
                 UserProject newUserProject = await _unitOfWork.UsersProjects.AddAndGetAsync(userProject);
                 await _unitOfWork.Complete();
                 UserProjectDTO userProjectDto = _mapper.Map<UserProjectDTO>(newUserProject);
@@ -42,27 +45,45 @@ namespace Application.Services.UserProjectServices
             catch (Exception ex) when (
                 ex is DataAccessException
                 || ex is FluentValidation.ValidationException
-                || ex is BusinessException
             )
             { throw; }
             catch (Exception ex) { throw new BusinessException(ex.Message); }
         }
 
-        //public async Task<bool> VerifyRelation(Guid projectId, Guid userId)
-        //{
-        //    try
-        //    {
-        //        IEnumerable<UserProject> relations = await _userProjectRepository.GetRelations(projectId, userId);
-        //        if (relations.Any())
-        //        {
-        //            return true;
-        //        }
-        //        return false;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new BusinessException(ex.Message);
-        //    }
-        //}
+        public async Task<IEnumerable<UserProjectDTO>> GetAllRelations(Guid projectId, Guid userId)
+        {
+            try
+            {
+                IEnumerable<UserProject> relations = await _unitOfWork.UsersProjects.FindAsync(
+                    up => up.ProjectId == projectId && up.UserId == userId
+                );
+                IEnumerable<UserProjectDTO> relationsDto = _mapper.Map<IEnumerable<UserProjectDTO>>(relations);
+                return relationsDto;
+            }
+            catch (Exception ex) when (
+                ex is DataAccessException
+            )
+            { throw; }
+            catch (Exception ex) { throw new BusinessException(ex.Message); }
+        }
+
+        public async Task<bool> UserAndProjectAreRelated(Guid projectId, Guid userId)
+        {
+            try
+            {
+                IEnumerable<UserProjectDTO> relations = await GetAllRelations(projectId, userId);
+                if (relations.Any())
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex) when (
+                ex is DataAccessException
+                || ex is BusinessException
+            )
+            { throw; }
+            catch (Exception ex) { throw new BusinessException(ex.Message); }
+        }
     }
 }

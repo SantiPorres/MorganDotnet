@@ -19,8 +19,8 @@ namespace Persistence.Repositories
             try
             {
                 return await Context.Set<T>()
-                    .SingleAsync(x => x.Id == id)
-                    ?? throw new KeyNotFoundException($"{typeof(T)} does not exist");
+                    .FirstOrDefaultAsync(x => x.Id == id)
+                    ?? throw new KeyNotFoundException("Not found");
             }
             catch (KeyNotFoundException) { throw; }
             catch (Exception ex) { throw new DataAccessException(ex.Message); }
