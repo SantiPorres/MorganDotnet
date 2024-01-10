@@ -66,5 +66,24 @@ namespace Application.Services.UserProjectServices
             { throw; }
             catch (Exception ex) { throw new BusinessException(ex.Message); }
         }
+
+        public async Task<bool> UserAndProjectAreRelated(Guid projectId, Guid userId)
+        {
+            try
+            {
+                IEnumerable<UserProjectDTO> relations = await GetAllRelations(projectId, userId);
+                if (relations.Any())
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex) when (
+                ex is DataAccessException
+                || ex is BusinessException
+            )
+            { throw; }
+            catch (Exception ex) { throw new BusinessException(ex.Message); }
+        }
     }
 }

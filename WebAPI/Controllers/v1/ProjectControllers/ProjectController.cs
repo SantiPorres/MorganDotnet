@@ -1,9 +1,9 @@
-﻿using Application.DTOs;
-using Application.DTOs.ProjectDTOs;
+﻿using Application.DTOs.ProjectDTOs;
 using Application.Filters;
 using Application.Interfaces.IServices;
 using Application.Wrappers;
 using Domain.CustomEntities;
+using Domain.CustomExceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Controllers.v1.Common;
@@ -31,43 +31,77 @@ namespace WebAPI.Controllers.v1.ProjectControllers
         [HttpGet("userProjects")]
         public async Task<PagedResponse<PagedList<ProjectDTO>>> GetProjectsByUserId([FromQuery] PaginationQueryParameters filters)
         {
-            Guid userId = await _tokenService.GetUserIdFromJwt(HttpContext) ?? throw new UnauthorizedAccessException();
-            PagedList<ProjectDTO> pagedProjects = await _projectService.GetAllProjectsByUserId(filters, userId);
-            string? message = null;
-            if (pagedProjects.TotalCount == 0)
-                message = "The user does not have any project";
-            return new PagedResponse<PagedList<ProjectDTO>>(
-                    pagedProjects,
-                    message: message,
-                    totalCount: pagedProjects.TotalCount,
-                    pagedProjects.PageSize,
-                    pagedProjects.CurrentPage,
-                    pagedProjects.HasNextPage,
-                    pagedProjects.HasPreviousPage,
-                    pagedProjects.NextPageNumber,
-                    pagedProjects.PreviousPageNumber
-            );
+            try
+            {
+                Guid userId = await _tokenService.GetUserIdFromJwt(HttpContext) ?? throw new UnauthorizedAccessException();
+                PagedList<ProjectDTO> pagedProjects = await _projectService.GetAllProjectsByUserId(filters, userId);
+                string? message = null;
+                if (pagedProjects.TotalCount == 0)
+                    message = "The user does not have any project";
+                return new PagedResponse<PagedList<ProjectDTO>>(
+                        pagedProjects,
+                        message: message,
+                        totalCount: pagedProjects.TotalCount,
+                        pagedProjects.PageSize,
+                        pagedProjects.CurrentPage,
+                        pagedProjects.HasNextPage,
+                        pagedProjects.HasPreviousPage,
+                        pagedProjects.NextPageNumber,
+                        pagedProjects.PreviousPageNumber
+                );
+            }
+            catch (Exception ex) when (
+                ex is DataAccessException
+                || ex is UnauthorizedAccessException
+                || ex is FluentValidation.ValidationException
+                || ex is BusinessException
+                || ex is KeyNotFoundException
+            )
+            { throw; }
+            catch (Exception ex) { throw new Exception(ex.Message, ex); }
         }
 
         [HttpGet("single")]
         public async Task<Response<ProjectDTO>> GetProjectById([FromQuery] Guid projectId)
         {
-            Guid userId = await _tokenService.GetUserIdFromJwt(HttpContext) ?? throw new UnauthorizedAccessException();
-            IEnumerable<UserProjectDTO> relations = await _userProjectService.GetAllRelations(projectId, userId);
-            if (relations.Any())
+            try
             {
+                Guid userId = await _tokenService.GetUserIdFromJwt(HttpContext) ?? throw new UnauthorizedAccessException();
+                bool userAndProjectAreRelated = await _userProjectService.UserAndProjectAreRelated(projectId, userId);
+                if (userAndProjectAreRelated == false)
+                    throw new UnauthorizedAccessException("The user is not related to the project");
                 ProjectDTO projectDto = await _projectService.GetProjectById(projectId);
                 return new Response<ProjectDTO>(projectDto);
             }
-            throw new UnauthorizedAccessException("The user is not related to the project");
+            catch (Exception ex) when (
+                ex is DataAccessException
+                || ex is UnauthorizedAccessException
+                || ex is FluentValidation.ValidationException
+                || ex is BusinessException
+                || ex is KeyNotFoundException
+            )
+            { throw; }
+            catch (Exception ex) { throw new Exception(ex.Message, ex); }
         }
 
-        [HttpPost]
+        [HttpPost("add")]
         public async Task<Response<ProjectDTO>> CreateProject(CreateProjectDTO body)
         {
-            Guid userId = await _tokenService.GetUserIdFromJwt(HttpContext) ?? throw new UnauthorizedAccessException();
-            ProjectDTO projectDto = await _projectService.CreateProject(userId, body);
-            return new Response<ProjectDTO>(projectDto);
+            try
+            {
+                Guid userId = await _tokenService.GetUserIdFromJwt(HttpContext) ?? throw new UnauthorizedAccessException();
+                ProjectDTO projectDto = await _projectService.CreateProject(userId, body);
+                return new Response<ProjectDTO>(projectDto);
+            }
+            catch (Exception ex) when (
+                ex is DataAccessException
+                || ex is UnauthorizedAccessException
+                || ex is FluentValidation.ValidationException
+                || ex is BusinessException
+                || ex is KeyNotFoundException
+            )
+            { throw; }
+            catch (Exception ex) { throw new Exception(ex.Message, ex); }
         }
     }
 }

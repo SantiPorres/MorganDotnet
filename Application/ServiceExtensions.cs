@@ -1,9 +1,12 @@
-﻿using Application.Interfaces.IServices;
+﻿using Application.DTOs.AssignmentDTOs;
+using Application.Interfaces.IServices;
 using Application.Services;
+using Application.Services.AssignmentServices;
 using Application.Services.ProjectServices;
 using Application.Services.UserProjectServices;
 using Application.Services.UserServices;
 using Application.Validators.AccountValidators;
+using Application.Validators.AssignmentValidators;
 using Application.Validators.ProjectValidators;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -28,6 +31,8 @@ namespace Application
             services.AddValidatorsFromAssemblyContaining<LoginUserDTOValidator>();
 
             services.AddValidatorsFromAssemblyContaining<CreateProjectDTOValidator>();
+
+            services.AddValidatorsFromAssemblyContaining<CreateAssignmentDTOValidator>();
 
             #endregion
 
@@ -65,6 +70,8 @@ namespace Application
             services.AddScoped<IProjectService, ProjectService>();
 
             services.AddScoped<IUserProjectService, UserProjectService>();
+
+            services.AddScoped<IAssignmentService, AssignmentService>();
 
             #endregion
         }

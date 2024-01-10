@@ -1,11 +1,11 @@
-﻿using Domain.Entities;
+﻿using Application.DTOs.AssignmentDTOs;
 using FluentValidation;
 
-namespace Domain.Validators
+namespace Application.Validators.AssignmentValidators
 {
-    public class AssignmentValidator : AbstractValidator<Assignment>
+    public class CreateAssignmentDTOValidator : AbstractValidator<CreateAssignmentDTO>
     {
-        public AssignmentValidator()
+        public CreateAssignmentDTOValidator()
         {
             RuleFor(assignment => assignment.Title)
                 .NotNull()
@@ -17,13 +17,6 @@ namespace Domain.Validators
             RuleFor(assignment => assignment.Description)
                 .MaximumLength(300)
                 .WithMessage("{PropertyName} must be shorter than {MaxLength} characters");
-
-            RuleFor(assignment => assignment.ProjectId)
-                .NotNull()
-                .NotEmpty()
-                .WithMessage("{PropertyName} must not be empty");
-
-            RuleFor(assignment => assignment.UserId);
         }
     }
 }

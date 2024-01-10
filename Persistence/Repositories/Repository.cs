@@ -21,8 +21,8 @@ namespace Persistence.Repositories
             try
             {
                 return Context.Set<T>()
-                    .Single(x => x.Id == id)
-                    ?? throw new KeyNotFoundException($"{typeof(T)} does not exist");
+                    .FirstOrDefault(x => x.Id == id)
+                    ?? throw new KeyNotFoundException("Not Found");
             }
             catch (KeyNotFoundException) { throw; }
             catch (Exception ex) { throw new DataAccessException(ex.Message); }

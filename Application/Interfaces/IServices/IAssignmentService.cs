@@ -4,6 +4,7 @@ namespace Application.Interfaces.IServices
 {
     public interface IAssignmentService
     {
-        Task<AssignmentDTO> AddAssignment(CreateAssignmentDTO body);
+        Task<AssignmentDTO> GetAssignmentById(Guid assignmentId);
+        Task<AssignmentDTO> AddAssignment(CreateAssignmentDTO body, Guid projectId);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Application.DTOs;
 using Application.DTOs.AccountDTOs;
+using Application.DTOs.AssignmentDTOs;
 using Application.DTOs.ProjectDTOs;
 using Application.DTOs.UserDTOs;
 using AutoMapper;
@@ -15,9 +16,9 @@ namespace Application.Mappings
 
             CreateMap<User, UserDTO>().ReverseMap();
 
-            CreateMap<User, RegisterUserDTO>().ReverseMap();
-
-            CreateMap<User, UpdateUserDTO>().ReverseMap();
+            // Input
+            CreateMap<RegisterUserDTO, User>();
+            CreateMap<UpdateUserDTO, User>();
 
             #endregion
 
@@ -25,7 +26,8 @@ namespace Application.Mappings
 
             CreateMap<Project, ProjectDTO>().ReverseMap();
 
-            CreateMap<Project, CreateProjectDTO>().ReverseMap();
+            // Input
+            CreateMap<CreateProjectDTO, Project>();
 
             #endregion
 
@@ -33,6 +35,15 @@ namespace Application.Mappings
 
             CreateMap<UserProject, UserProjectDTO>();
 
+            #endregion
+
+            #region Assignment
+
+            CreateMap<Assignment, AssignmentDTO>().ReverseMap();
+
+            // Input
+            CreateMap<CreateAssignmentDTO, Assignment>();
+            
             #endregion
         }
     }

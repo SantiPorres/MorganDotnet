@@ -124,9 +124,13 @@ namespace Application.Services.ProjectServices
             try
             {
                 UserDTO user = await _userService.GetUserById(userId, false);
-                await _createProjectDTOValidator.ValidateAndThrowAsync(body);
+                ValidationResult validationResult = await _createProjectDTOValidator.ValidateAsync(body);
+                if (validationResult.IsValid == false)
+                    throw new FluentValidation.ValidationException(
+                        validationResult.Errors
+                    );
                 Project project = _mapper.Map<Project>(body);
-                await _projectValidator.ValidateAndThrowAsync(project);
+                //await _projectValidator.ValidateAndThrowAsync(project);
                 Project newProject = await _unitOfWork.Projects.AddAndGetAsync(project);
                 UserProject userProject = new UserProject
                 {

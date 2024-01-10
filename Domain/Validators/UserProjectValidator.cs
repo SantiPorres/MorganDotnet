@@ -8,10 +8,12 @@ namespace Domain.Validators
         public UserProjectValidator()
         {
             RuleFor(userProject => userProject.UserId)
+                .NotNull()
                 .NotEmpty()
                 .WithMessage("{PropertyName} must not be empty");
 
             RuleFor(userProject => userProject.ProjectId)
+                .NotNull()
                 .NotEmpty()
                 .WithMessage("{PropertyName} must not be empty");
 
