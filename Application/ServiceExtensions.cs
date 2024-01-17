@@ -47,7 +47,7 @@ namespace Application
                     ValidIssuer = configuration["JwtSettings:Issuer"],
                     ValidAudience = configuration["JwtSettings:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey
-                    (Encoding.UTF8.GetBytes(configuration["JwtSettings:SecretKey"])),
+                    (Encoding.UTF8.GetBytes(configuration["JwtSettings:SecretKey"]!)),
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,

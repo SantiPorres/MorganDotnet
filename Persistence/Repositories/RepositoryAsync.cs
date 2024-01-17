@@ -44,6 +44,17 @@ namespace Persistence.Repositories
             catch (Exception ex) { throw new DataAccessException(ex.Message); }
         }
 
+        public async Task<IEnumerable<T>> GetSeveralAsync(IEnumerable<Guid> ids)
+        {
+            try
+            {
+                return await Context.Set<T>()
+                    .Where(x => ids.Contains(x.Id))
+                    .ToListAsync();
+            }
+            catch (Exception ex) { throw new DataAccessException(ex.Message); }
+        }
+
 
         public async Task AddAsync(T entity)
         {
