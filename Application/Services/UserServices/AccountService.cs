@@ -10,6 +10,7 @@ using FluentValidation;
 using Domain.CustomEntities;
 using Domain.CustomExceptions;
 using Domain.Entities;
+using FluentValidation.Results;
 
 
 namespace Application.Services.UserServices
@@ -44,7 +45,11 @@ namespace Application.Services.UserServices
         {
             try
             {
-                await _loginUserDTOValidator.ValidateAndThrowAsync(body);
+                ValidationResult validationResult = await _loginUserDTOValidator.ValidateAsync(body);
+                if (validationResult.IsValid == false)
+                    throw new FluentValidation.ValidationException(
+                        validationResult.Errors
+                    );
                 User userValid = await ValidateCredentials(body);
                 string token = await _jwtTokenService.GenerateJWT(userValid);
                 UserDTO userDto = _mapper.Map<UserDTO>(userValid);

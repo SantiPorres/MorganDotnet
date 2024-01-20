@@ -78,7 +78,7 @@ namespace Application.Services.ProjectServices
                 {
                     ProjectDTO projectDto = await GetProjectById(
                         relation.ProjectId,
-                        false
+                        true
                     );
                     projectsDTOs.Add(projectDto);
                 }
@@ -136,7 +136,7 @@ namespace Application.Services.ProjectServices
                 {
                     UserId = user.Id,
                     ProjectId = newProject.Id,
-                    Role = UserRole.ProjectAdmin
+                    Role = UserRole.ProjectOwner
                 };
                 await _userProjectService.CreateRelation(userProject);
                 await _unitOfWork.Complete();

@@ -7,6 +7,7 @@ namespace Application.Interfaces.IRepositories
         T Get(Guid id);
         IEnumerable<T> GetAll();
         IEnumerable<T> Find(Expression<Func<T, bool>> predicate);
+        IEnumerable<T> GetSeveral(IEnumerable<Guid> ids);
 
         void Add(T entity);
         void AddRange(IEnumerable<T> entities);

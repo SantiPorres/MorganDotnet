@@ -7,11 +7,12 @@ using Domain.CustomEntities;
 using Domain.CustomExceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.CompilerServices;
 using WebAPI.Controllers.v1.Common;
 
 namespace WebAPI.Controllers.v1.UserControllers
 {
-    [Authorize]
+    //[Authorize]
     [Produces("application/json")]
     public class UserController : BaseApiController
     {
@@ -84,6 +85,26 @@ namespace WebAPI.Controllers.v1.UserControllers
                 || ex is FluentValidation.ValidationException
                 || ex is BusinessException
                 || ex is KeyNotFoundException
+            )
+            { throw; }
+            catch (Exception ex) { throw new Exception(ex.Message, ex); }
+        }
+
+        [Route("several")]
+        [HttpGet]
+        public async Task<Response<IEnumerable<UserDTO>>> GetSeveralUsersByIds(
+            [FromQuery] IEnumerable<Guid> ids
+        )
+        {
+            try
+            {
+                IEnumerable<UserDTO> users = await _userService.GetSeveralUsersById(ids);
+                return new Response<IEnumerable<UserDTO>>(users);
+            }
+            catch (Exception ex) when (
+                ex is DataAccessException
+                || ex is UnauthorizedAccessException
+                || ex is BusinessException
             )
             { throw; }
             catch (Exception ex) { throw new Exception(ex.Message, ex); }

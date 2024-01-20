@@ -2,6 +2,7 @@
 using Application.DTOs.UserDTOs;
 using Application.Filters;
 using Domain.CustomEntities;
+using Domain.Entities;
 
 namespace Application.Interfaces.IServices
 {
@@ -12,5 +13,7 @@ namespace Application.Interfaces.IServices
         Task<UserDTO> GetUserById(Guid userId, bool? navigable = true);
 
         Task<UserDTO> AddUser(RegisterUserDTO body);
+
+        Task<IEnumerable<UserDTO>> GetSeveralUsersById(IEnumerable<Guid> ids);
     }
 }

@@ -124,5 +124,24 @@ namespace Application.Services.UserServices
             ) { throw; }
             catch (Exception ex) { throw new BusinessException(ex.Message); }
         }
+
+        public async Task<IEnumerable<UserDTO>> GetSeveralUsersById(IEnumerable<Guid> ids)
+        {
+            //IEnumerable<string> strings = [
+            //    "E0950C29-6B0B-4F8E-ACE2-08DC15CFD996",
+            //    "091B8B1A-309A-44B1-297B-08DC15F1DE8B"
+            //];
+
+            //ICollection<Guid> ids = [];
+
+            //foreach(string s in strings)
+            //{
+            //    Guid guid = new Guid(s);
+            //    ids.Add(guid);
+            //}
+            IEnumerable<User> users = await _unitOfWork.Users.GetSeveralAsync(ids);
+            IEnumerable<UserDTO> usersDtos = _mapper.Map<IEnumerable<UserDTO>>(users);
+            return usersDtos;
+        }
     }
 }

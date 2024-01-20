@@ -3,6 +3,7 @@ using Application.DTOs.UserDTOs;
 using Application.Interfaces.IServices;
 using Application.Wrappers;
 using Domain.CustomEntities;
+using Domain.CustomExceptions;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Controllers.v1.Common;
 
@@ -21,21 +22,45 @@ namespace WebAPI.Controllers.v1.AccountControllers
         [HttpPost]
         public async Task<JwtTokenResponse> LoginUser(LoginUserDTO body)
         {
-            TokenAndEntity<UserDTO> loggedUser = await _accountService.LoginUser(body);
-            return new JwtTokenResponse
+            try
             {
-                Succeeded = true,
-                Token = loggedUser.Token,
-                User = loggedUser.Data
-            };
+                TokenAndEntity<UserDTO> loggedUser = await _accountService.LoginUser(body);
+                return new JwtTokenResponse
+                {
+                    Succeeded = true,
+                    Token = loggedUser.Token,
+                    User = loggedUser.Data
+                };
+            }
+            catch (Exception ex) when (
+                ex is DataAccessException
+                || ex is UnauthorizedAccessException
+                || ex is FluentValidation.ValidationException
+                || ex is BusinessException
+                || ex is KeyNotFoundException
+            )
+            { throw; }
+            catch (Exception ex) { throw new Exception(ex.Message, ex); }
         }
 
         [Route("register")]
         [HttpPost]
         public async Task<Response<UserDTO>> RegisterUser(RegisterUserDTO body)
         {
-            UserDTO userDto = await _accountService.RegisterUser(body);
-            return new Response<UserDTO>(userDto);
+            try
+            {
+                UserDTO userDto = await _accountService.RegisterUser(body);
+                return new Response<UserDTO>(userDto);
+            }
+            catch (Exception ex) when (
+                ex is DataAccessException
+                || ex is UnauthorizedAccessException
+                || ex is FluentValidation.ValidationException
+                || ex is BusinessException
+                || ex is KeyNotFoundException
+            )
+            { throw; }
+            catch (Exception ex) { throw new Exception(ex.Message, ex); }
         }
     }
 }

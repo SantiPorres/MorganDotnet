@@ -46,6 +46,17 @@ namespace Persistence.Repositories
             catch (Exception ex) { throw new DataAccessException(ex.Message); }
         }
 
+        public IEnumerable<T> GetSeveral(IEnumerable<Guid> ids)
+        {
+            try
+            {
+                return Context.Set<T>()
+                    .Where(x => ids.Contains(x.Id))
+                    .ToList();
+            }
+            catch (Exception ex) { throw new DataAccessException(ex.Message); }
+        }
+
 
         public void Add(T entity)
         {
