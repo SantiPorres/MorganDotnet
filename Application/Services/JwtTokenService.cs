@@ -79,7 +79,7 @@ namespace Application.Services
                 _configuration["JwtSettings:Audience"],
                 claims,
                 _dateTimeService.NowUTC,
-                _dateTimeService.NowUTC.AddMinutes(10)
+                _dateTimeService.NowUTC.AddMinutes(90)
             );
             var token = new JwtSecurityToken(header, payload);
             return new JwtSecurityTokenHandler().WriteToken(token);

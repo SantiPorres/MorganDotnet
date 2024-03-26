@@ -61,8 +61,9 @@ namespace WebAPI.Controllers.v1.ProjectControllers
             catch (Exception ex) { throw new Exception(ex.Message, ex); }
         }
 
-        [HttpGet("single")]
-        public async Task<Response<ProjectDTO>> GetProjectById([FromQuery] Guid projectId)
+        [HttpGet]
+        [Route("{projectId}")]
+        public async Task<Response<ProjectDTO>> GetProjectById([FromRoute] Guid projectId)
         {
             try
             {
